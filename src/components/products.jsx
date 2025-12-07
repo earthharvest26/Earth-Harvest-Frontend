@@ -51,11 +51,11 @@ const handleMouseMove = (e) => {
 
 
   const product = {
-    name: "NOURISH Complete",
+    name: "Himalayan Dog Chew",
     tagline: "Premium All-in-One Dog Nutrition",
-    brand: "NOURISH",
+    brand: "Earth & Harvest",
     description: "Our revolutionary formula combines 47 essential nutrients with real, human-grade ingredients. Developed with veterinary nutritionists for optimal health at every life stage.",
-    longDescription: `NOURISH Complete is more than just dog food – it's a comprehensive nutrition system designed to support your dog's health from the inside out.
+    longDescription: `Earth & Harvest Himalayan Dog Chew is more than just dog food – it's a comprehensive nutrition system designed to support your dog's health from the inside out.
 
 Every ingredient is carefully selected and balanced to provide complete nutrition for dogs of all breeds and ages. Our proprietary blend includes:
 
@@ -211,7 +211,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
     <div className="min-h-screen bg-background">
       <Navbar cartCount={cartCount} />
       
-      {/* Breadcrumb */}
+      {/* Breadcrumb
       <div className="bg-secondary/30 border-b border-border py-3 px-4 sm:px-6 lg:px-12">
         <div className="max-w-[1400px] mx-auto">
           <div className="flex items-center space-x-2 text-sm text-muted-foreground overflow-x-auto whitespace-nowrap">
@@ -224,10 +224,10 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             <span className="text-foreground font-medium">{product.name}</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Product Section */}
-      <section className="py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-12">
+      <section className="py-8 sm:py-8 lg:py-16 px-4 sm:px-6 lg:px-12">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
             {/* Product Images - Left Column */}
@@ -275,10 +275,10 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
 
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
-                    <span className="bg-accent text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                    <span className="bg-[#C8945C] text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                       SAVE 25%
                     </span>
-                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                    <span className="bg-[#C8945C] text-primary-foreground px-3 py-1 rounded-full text-xs font-bold shadow-lg">
                       #1 BESTSELLER
                     </span>
                   </div>
@@ -288,12 +288,12 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                     <button 
                       onClick={() => setIsWishlisted(!isWishlisted)}
                       className={`w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all ${
-                        isWishlisted ? 'bg-red-500 text-white' : 'bg-background/90 backdrop-blur-sm text-foreground hover:bg-background'
+                        isWishlisted ? 'bg-red-500 text-white' : 'bg-background/90  text-foreground hover:bg-background'
                       }`}
                     >
                       <Heart className={`w-5 h-5 ${isWishlisted ? 'fill-current' : ''}`} />
                     </button>
-                    <button className="w-10 h-10 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-background transition-all shadow-lg">
+                    <button className="w-10 h-10 bg-background/90  rounded-full flex items-center justify-center hover:bg-background transition-all shadow-lg">
                       <Share2 className="w-5 h-5 text-foreground" />
                     </button>
                   </div>
@@ -329,7 +329,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div className="flex items-center space-x-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`w-5 h-5 ${i < Math.floor(product.rating) ? 'text-accent fill-accent' : 'text-muted'}`} />
+                    <Star key={i} className={`w-5 h-5 ${i < Math.floor(product.rating) ? 'text-accent fill-accent text-amber-700 fill-amber-700' : 'text-muted'}`} />
                   ))}
                 </div>
                 <span className="text-primary font-bold">{product.rating}</span>
@@ -387,7 +387,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
 
             {/* Buy Box - Right Column */}
             <div className="lg:col-span-3" ref={buyBoxRef}>
-              <div className="bg-card border border-border rounded-2xl p-5 space-y-5 sticky top-24">
+              <div className="bg-[#F8F2EC] border border-border rounded-2xl p-5 space-y-5 sticky top-24">
                 {/* Price */}
                 <div>
                   <div className="flex items-baseline gap-2 flex-wrap">
@@ -433,7 +433,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                         onClick={() => setSelectedSize(size.weight)}
                         className={`p-3 rounded-lg text-center transition-all border-2 ${
                           selectedSize === size.weight
-                            ? 'border-primary bg-primary/5'
+                            ? 'border-primary bg-[#C8945C]'
                             : 'border-border hover:border-primary/50'
                         }`}
                       >
@@ -467,14 +467,14 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                 {/* Add to Cart */}
                 <button 
                   onClick={addToCart}
-                  className="w-full bg-primary hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02] flex items-center justify-center gap-2"
+                  className="w-full bg-[#C8945C] hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02] flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </button>
 
                 {/* Buy Now */}
-                <button className="w-full bg-accent hover:bg-accent/90 text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02]">
+                <button className="w-full bg-[#C8945C] hover:bg-accent/90 text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02]">
                   Buy Now
                 </button>
 
@@ -516,13 +516,13 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       </section>
 
       {/* Sticky Buy Bar */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {showStickyBar && (
           <motion.div
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -100, opacity: 0 }}
-            className="fixed top-0 left-0 right-0 bg-card/95 backdrop-blur-lg border-b border-border shadow-elevated z-50"
+            className="fixed top-0 left-0 right-0 bg-[#F8F2EC] border-b border-border z-50"
           >
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-3">
               <div className="flex items-center justify-between gap-4">
@@ -562,7 +562,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       {/* Product Details Tabs */}
       <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-12 bg-secondary/30">
@@ -605,7 +605,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   {features.map((feature, idx) => (
-                    <div key={idx} className="bg-card rounded-xl p-5 border border-border">
+                    <div key={idx} className="bg-[#F8F2EC] rounded-xl p-5 border border-border">
                       <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
                         <feature.icon className="w-5 h-5 text-primary" />
                       </div>
@@ -911,7 +911,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             {faqs.map((faq, idx) => (
               <div
                 key={idx}
-                className="bg-card border border-border rounded-xl overflow-hidden"
+                className="bg-[#F8F2EC] border border-border rounded-xl overflow-hidden"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}

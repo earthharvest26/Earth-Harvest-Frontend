@@ -25,15 +25,15 @@ const Index = () => {
       alt: "Happy Golden Retriever"
     },
     {
-      src: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=1200&h=1400&fit=crop",
+      src: "./20251202_0058_Luxurious Dog Chew Scene_remix_01kbdp3v53er4tx9gv6h3nf06c.png",
       alt: "Healthy Labrador"
     },
     {
-      src: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200&h=1400&fit=crop",
+      src: "./20251207_1329_Himalayan Dog Chew_remix_01kbvx2nceetg8v2qk7m1eq9vf.png",
       alt: "Energetic German Shepherd"
     },
     {
-      src: "https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=1200&h=1400&fit=crop",
+      src: "./20251207_2012_Dog Enjoying Chew_remix_01kbwm3zz8e8980xe6t7yk53wr.png",
       alt: "Active Border Collie"
     }
   ];
@@ -44,7 +44,7 @@ const Index = () => {
       alt: "Premium dog food ingredients"
     },
     {
-      src: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=1000&fit=crop",
+      src: "./20251207_2012_Dog Enjoying Chew_remix_01kbwm3zz8e8980xe6t7yk53wr.png",
       alt: "Fresh salmon and vegetables"
     },
     {
