@@ -279,7 +279,7 @@ const Index = () => {
                 <span className="text-muted-foreground">({product.reviews.toLocaleString()} reviews)</span>
               </div>
 
-              {/* Size Selection */}
+              {/* Size Selection
               <div className="space-y-3">
                 <p className="font-semibold text-foreground">Select Size:</p>
                 <div className="flex flex-wrap gap-3">
@@ -297,7 +297,7 @@ const Index = () => {
                     </button>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               {/* Price & Add to Cart */}
               <div className="bg-[#F8F2EC] border border-border rounded-2xl p-4 sm:p-6 space-y-4">
