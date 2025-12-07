@@ -19,7 +19,7 @@ const Index = () => {
 
   const heroImages = [
     {
-      src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1200&h=1400&fit=crop",
+      src: "/20251202_0045_Majestic Golden Retriever_simple_compose_01kbdnbbh8fmm8xrwxagafwra8.png",
       alt: "Happy Golden Retriever"
     },
     {
@@ -27,7 +27,7 @@ const Index = () => {
       alt: "Healthy Labrador"
     },
     {
-      src: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=1200&h=1400&fit=crop",
+      src: "/20251202_0058_Luxurious Dog Chew Scene_remix_01kbdp3v53er4tx9gv6h3nf06c.png",
       alt: "Energetic German Shepherd"
     },
     {
@@ -176,16 +176,16 @@ const Index = () => {
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background">
       {/* Promo Banner */}
-      <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-xs sm:text-sm font-semibold">
+      <div className="relative bg-[#C8945C] text-primary-foreground py-2 px-4 text-center text-xs sm:text-sm font-semibold">
         <span className="hidden sm:inline">🎁 LAUNCH SPECIAL: </span>
         25% OFF + FREE SHIPPING • Code: <span className="font-bold">HEALTHYDOG</span>
         <span className="hidden md:inline"> • Ends Sunday</span>
       </div>
 
       {/* Navigation */}
-      <nav className={`sticky top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-background/95 backdrop-blur-xl shadow-premium py-2' : 'bg-background py-3'}`}>
+      <nav className={`sticky top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-[#F8F2EC] py-2' : 'bg-[#F8F2EC] py-3'}`}>
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
           <div className="flex justify-between items-center">
             <a href="/" className="flex items-center space-x-3">
@@ -228,7 +228,7 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/50 via-background to-background" />
         
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-12 lg:py-20 relative z-10 w-full">
@@ -282,7 +282,7 @@ const Index = () => {
                       className={`px-4 sm:px-6 py-3 rounded-xl font-semibold transition-all text-sm sm:text-base ${
                         selectedSize === size.weight
                           ? 'bg-primary text-primary-foreground shadow-premium ring-2 ring-primary ring-offset-2'
-                          : 'bg-card text-foreground border border-border hover:border-primary'
+                          : 'bg-card text-foreground border border-border hover:border-primary hover:cursor-pointer'
                       }`}
                     >
                       {size.weight} lbs
@@ -306,14 +306,14 @@ const Index = () => {
                   <div className="flex items-center border border-border rounded-xl overflow-hidden">
                     <button 
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                      className="p-3 hover:bg-muted transition-colors"
+                      className="p-3 hover:bg-muted hover:cursor-pointer transition-colors"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="px-4 sm:px-6 font-semibold">{quantity}</span>
                     <button 
                       onClick={() => setQuantity(q => q + 1)}
-                      className="p-3 hover:bg-muted transition-colors"
+                      className="p-3 hover:bg-muted hover:cursor-pointer transition-colors"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -321,7 +321,7 @@ const Index = () => {
 
                   <button 
                     onClick={addToCart}
-                    className="flex-1 bg-primary hover:bg-accent text-primary-foreground py-3 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02] flex items-center justify-center space-x-2"
+                    className="flex-1 bg-[#C8945C] hover:bg-accent hover:cursor-pointer text-primary-foreground py-3 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02] flex items-center justify-center space-x-2"
                   >
                     <ShoppingCart className="w-5 h-5" />
                     <span>Add to Cart</span>
@@ -387,10 +387,10 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
-                className="absolute -bottom-4 -left-4 sm:bottom-8 sm:-left-8 bg-card border border-border rounded-2xl p-4 shadow-elevated"
+                className="absolute ml-2 lg:ml-0 bg-[#F8F2EC] -bottom-4 -left-4 sm:bottom-8 sm:-left-8 bg-card border border-border rounded-2xl p-4 shadow-elevated"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <div className="w-6 h-6 lg:w-12 lg:h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                     <Users className="w-6 h-6 text-primary" />
                   </div>
                   <div>
@@ -405,9 +405,9 @@ const Index = () => {
       </section>
 
       {/* Trust Bar */}
-      <section className="py-6 sm:py-8 bg-foreground">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <section className="py-6 bg-[#F8F2EC] sm:py-8 bg-foreground">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 lg:ml-40">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-4">
             {guarantees.map((item, idx) => (
               <motion.div
                 key={idx}
@@ -450,47 +450,31 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Benefits */}
-      <section id="benefits" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-background">
-        <div className="max-w-[1400px] mx-auto">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12 lg:mb-16"
-          >
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">Why Dogs Love NOURISH</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Science-backed nutrition with ingredients you can actually pronounce
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {benefits.map((benefit, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="bg-card rounded-2xl p-6 lg:p-8 shadow-lg hover:shadow-premium transition-all hover:-translate-y-2 border border-border text-center"
-              >
-                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 mx-auto">
-                  <benefit.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{benefit.title}</h3>
-                <p className="text-sm text-muted-foreground">{benefit.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Ingredients */}
+        {/* Ingredients */}
       <section id="ingredients" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-secondary/30">
-        <div className="max-w-[1400px] mx-auto">
+        <div className="max-w-[1200px] mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div 
+      
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              style={{ y: parallaxY }}
+              className="relative"
+            >
+              <img 
+                src="/20251207_1329_Himalayan Dog Chew_remix_01kbvx2nceetg8v2qk7m1eq9vf.png"
+                alt="Premium ingredients"
+                className="rounded-2xl shadow-elevated w-full"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent rounded-2xl" />
+              <div className="absolute bottom-6 left-6 right-6 text-background">
+                <p className="font-bold text-xl">47 Essential Nutrients</p>
+                <p className="text-sm text-background/80">In every bowl</p>
+              </div>
+            </motion.div>
+
+             <motion.div 
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -528,28 +512,47 @@ const Index = () => {
                 ))}
               </div>
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              style={{ y: parallaxY }}
-              className="relative"
-            >
-              <img 
-                src="https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=800&h=1000&fit=crop"
-                alt="Premium ingredients"
-                className="rounded-2xl shadow-elevated w-full"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent rounded-2xl" />
-              <div className="absolute bottom-6 left-6 right-6 text-background">
-                <p className="font-bold text-xl">47 Essential Nutrients</p>
-                <p className="text-sm text-background/80">In every bowl</p>
-              </div>
-            </motion.div>
           </div>
         </div>
       </section>
+
+      {/* Benefits */}
+      <section id="benefits" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-background">
+        <div className="max-w-[1400px] mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12 lg:mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">Why Dogs Love NOURISH</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Science-backed nutrition with ingredients you can actually pronounce
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {benefits.map((benefit, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="bg-card rounded-2xl p-6 lg:p-8 shadow-lg hover:shadow-premium transition-all hover:-translate-y-2 border border-border text-center"
+              >
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 mx-auto">
+                  <benefit.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold text-foreground mb-2">{benefit.title}</h3>
+                <p className="text-sm text-muted-foreground">{benefit.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+    
 
       {/* Video/Story Section */}
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-foreground">

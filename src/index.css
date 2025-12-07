@@ -3,6 +3,10 @@
 All colors MUST be HSL.
 */
 
+body {
+    overflow-x: hidden;
+  }
+
 @layer base {
   :root {
     --background: 35 20% 97%;
