@@ -392,15 +392,15 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                 <div>
                   <div className="flex items-baseline gap-2 flex-wrap">
                     <span className="text-sm text-muted-foreground">Price:</span>
-                    <span className="text-3xl font-bold text-foreground">${currentPrice?.price}</span>
-                    <span className="text-lg text-muted-foreground line-through">${currentPrice?.oldPrice}</span>
+                    <span className="text-3xl font-bold text-foreground">AED{currentPrice?.price}</span>
+                    <span className="text-lg text-muted-foreground line-through">AED{currentPrice?.oldPrice}</span>
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="bg-accent text-primary-foreground px-2 py-0.5 rounded text-xs font-bold">
-                      SAVE ${((currentPrice?.oldPrice || 0) - (currentPrice?.price || 0)).toFixed(2)}
+                      SAVE AED{((currentPrice?.oldPrice || 0) - (currentPrice?.price || 0)).toFixed(2)}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      (${currentPrice?.pricePerLb}/lb)
+                      (AED{currentPrice?.pricePerLb}/lb)
                     </span>
                   </div>
                 </div>
