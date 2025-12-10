@@ -22,7 +22,7 @@ const Navbar = ({ cartCount }) => {
             <img 
               src="https://i.ibb.co/99XT05ZF/New-Logo-Tinny-transparent.png" 
               alt="Nourish Logo"
-              className="w-24 sm:w-28 lg:w-32 h-10 sm:h-12 lg:h-14 object-contain"
+              className="w-48 h-10 sm:h-12 lg:h-16 object-contain"
             />
           </a>
           

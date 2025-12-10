@@ -38,17 +38,15 @@ const Product = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleMouseMove = (e) => {
+    if (!imageRef.current) return;
+    
+    const rect = imageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-const handleMouseMove = (e) => {
-  if (!imageRef.current) return;
-  
-  const rect = imageRef.current.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-  setZoomPosition({ x, y });
-};
-
+    setZoomPosition({ x, y });
+  };
 
   const product = {
     name: "Himalayan Dog Chew",
@@ -182,7 +180,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       verified: true,
       rating: 4,
       date: "1 week ago",
-      title: "Great quality, wish there were more sizes",
+      title: "Great quality, but wish there were more sizes",
       content: "My Chihuahua loves this food and her energy levels are through the roof. Only wish they had a smaller 5lb bag option for tiny dogs. The 15lb bag takes us about 3 months, which is a long time to keep fresh.",
       helpful: 234,
       size: "15 lbs",
@@ -199,34 +197,58 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
     { stars: 1, percentage: 1, count: 129 },
   ];
 
- const handleHelpful = (reviewId, type) => {
-  setHelpfulReviews(prev => ({
-    ...prev,
-    [reviewId]: prev[reviewId] === type ? null : type
-  }));
-};
+  const handleHelpful = (reviewId, type) => {
+    setHelpfulReviews(prev => ({
+      ...prev,
+      [reviewId]: prev[reviewId] === type ? null : type
+    }));
+  };
 
+  // Checkout State
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [showAddress, setShowAddress] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+
+  const [address, setAddress] = useState({
+    name: "",
+    phone: "",
+    street: "",
+    city: "",
+    zipcode: ""
+  });
+
+  const handleBuyNow = () => {
+    setShowCheckout(true);
+  };
+
+  const initiatePayment = async () => {
+    try {
+      const orderPayload = {
+        productId: "123",
+        size: selectedSize,
+        quantity,
+        totalAmount: (currentPrice.price * quantity),
+        address
+      };
+
+      const res = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload)
+      });
+
+      const data = await res.json();
+
+      window.location.href = data.paymentUrl;
+    } catch (err) {
+      console.error("Payment Error:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar cartCount={cartCount} />
-      
-      {/* Breadcrumb
-      <div className="bg-secondary/30 border-b border-border py-3 px-4 sm:px-6 lg:px-12">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="flex items-center space-x-2 text-sm text-muted-foreground overflow-x-auto whitespace-nowrap">
-            <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-            <ChevronRight className="w-4 h-4 flex-shrink-0" />
-            <span className="hover:text-primary transition-colors cursor-pointer">Dog Food</span>
-            <ChevronRight className="w-4 h-4 flex-shrink-0" />
-            <span className="hover:text-primary transition-colors cursor-pointer">Premium</span>
-            <ChevronRight className="w-4 h-4 flex-shrink-0" />
-            <span className="text-foreground font-medium">{product.name}</span>
-          </div>
-        </div>
-      </div> */}
-
-      {/* Main Product Section */}
+            {/* Main Product Section */}
       <section className="py-8 sm:py-8 lg:py-16 px-4 sm:px-6 lg:px-12">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid lg:grid-cols-12 gap-6 lg:gap-8">
@@ -329,7 +351,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div className="flex items-center space-x-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`w-5 h-5 ${i < Math.floor(product.rating) ? 'text-accent fill-accent text-amber-700 fill-amber-700' : 'text-muted'}`} />
+                    <Star key={i} className={`w-5 h-5 ${i < Math.floor(product.rating) ? 'text-accent fill-accent' : 'text-muted'}`} />
                   ))}
                 </div>
                 <span className="text-primary font-bold">{product.rating}</span>
@@ -388,6 +410,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             {/* Buy Box - Right Column */}
             <div className="lg:col-span-3" ref={buyBoxRef}>
               <div className="bg-[#F8F2EC] border border-border rounded-2xl p-5 space-y-5 sticky top-24">
+
                 {/* Price */}
                 <div>
                   <div className="flex items-baseline gap-2 flex-wrap">
@@ -438,13 +461,13 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                         }`}
                       >
                         <p className="font-bold text-sm text-foreground">{size.weight} lbs</p>
-                        <p className="text-xs text-primary font-semibold">${size.price}</p>
+                        <p className="text-xs text-primary font-semibold">AED{size.price}</p>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Quantity */}
+                {/* Quantity Selector */}
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-semibold text-foreground">Qty:</span>
                   <div className="flex items-center border border-border rounded-lg overflow-hidden">
@@ -467,28 +490,34 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                 {/* Add to Cart */}
                 <button 
                   onClick={addToCart}
-                  className="w-full bg-[#C8945C] hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02] flex items-center justify-center gap-2"
+                  className="w-full bg-[#C8945C] hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </button>
 
                 {/* Buy Now */}
-                <button className="w-full bg-[#C8945C] hover:bg-accent/90 text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium hover:shadow-elevated hover:scale-[1.02]">
+                <button 
+                  onClick={handleBuyNow}
+                  className="w-full bg-[#C8945C] hover:bg-accent/90 text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all"
+                >
                   Buy Now
                 </button>
 
                 {/* Subscribe Option */}
                 <div className="border border-primary/30 bg-primary/5 rounded-xl p-4">
                   <label className="flex items-start gap-3 cursor-pointer">
-                    <input type="checkbox" className="mt-1 w-4 h-4 rounded border-primary text-primary focus:ring-primary" />
+                    <input 
+                      type="checkbox" 
+                      className="mt-1 w-4 h-4 rounded border-primary text-primary focus:ring-primary" 
+                    />
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <Gift className="w-4 h-4 text-primary" />
                         <span className="font-bold text-foreground text-sm">Subscribe & Save 20%</span>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        ${((currentPrice?.price || 0) * 0.8).toFixed(2)} every 30 days. Cancel anytime.
+                        AED{((currentPrice?.price || 0) * 0.8).toFixed(2)} every 30 days. Cancel anytime.
                       </p>
                     </div>
                   </label>
@@ -515,59 +544,9 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
         </div>
       </section>
 
-      {/* Sticky Buy Bar */}
-      {/* <AnimatePresence>
-        {showStickyBar && (
-          <motion.div
-            initial={{ y: -100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            className="fixed top-0 left-0 right-0 bg-[#F8F2EC] border-b border-border z-50"
-          >
-            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-3">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <img 
-                    src={product.images[0]} 
-                    alt={product.name}
-                    className="w-12 h-12 rounded-lg object-cover hidden sm:block"
-                  />
-                  <div>
-                    <p className="font-bold text-foreground">{product.name}</p>
-                    <div className="flex items-center gap-2">
-                      <div className="flex">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 text-accent fill-accent" />
-                        ))}
-                      </div>
-                      <span className="text-xs text-muted-foreground">{product.reviews.toLocaleString()} reviews</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right hidden sm:block">
-                    <span className="text-2xl font-bold text-foreground">${currentPrice?.price}</span>
-                    <span className="text-sm text-muted-foreground line-through ml-2">${currentPrice?.oldPrice}</span>
-                  </div>
-                  <button 
-                    onClick={addToCart}
-                    className="bg-primary hover:bg-accent text-primary-foreground px-6 py-2.5 rounded-lg font-bold transition-all flex items-center gap-2"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    <span className="hidden sm:inline">Add to Cart</span>
-                    <span className="sm:hidden">Add</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence> */}
-
       {/* Product Details Tabs */}
       <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-12 bg-secondary/30">
         <div className="max-w-[1400px] mx-auto">
-          {/* Tab Navigation */}
           <div className="flex overflow-x-auto border-b border-border mb-8">
             {[
               { id: 'description', label: 'Description' },
@@ -589,20 +568,16 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             ))}
           </div>
 
-          {/* Tab Content */}
           <div className="min-h-[300px]">
             {activeTab === 'description' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="grid lg:grid-cols-2 gap-8"
-              >
-                <div className="space-y-4">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid lg:grid-cols-2 gap-8">
+                                <div className="space-y-4">
                   <h3 className="text-2xl font-bold text-foreground">About This Product</h3>
                   <div className="prose prose-sm text-muted-foreground whitespace-pre-line">
                     {product.longDescription}
                   </div>
                 </div>
+
                 <div className="grid sm:grid-cols-2 gap-4">
                   {features.map((feature, idx) => (
                     <div key={idx} className="bg-[#F8F2EC] rounded-xl p-5 border border-border">
@@ -618,30 +593,27 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             )}
 
             {activeTab === 'ingredients' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <h3 className="text-2xl font-bold text-foreground">Premium Ingredients</h3>
-                <p className="text-muted-foreground">Every ingredient is carefully selected for quality and nutritional value. All proteins are sourced from trusted North American suppliers.</p>
+                <p className="text-muted-foreground">
+                  Every ingredient is carefully selected for quality and nutritional value.
+                </p>
+
                 <div className="flex flex-wrap gap-2">
                   {ingredients.map((ingredient, idx) => (
-                    <span 
-                      key={idx}
-                      className="bg-card border border-border px-4 py-2 rounded-full text-sm font-medium text-foreground"
-                    >
+                    <span key={idx} className="bg-card border border-border px-4 py-2 rounded-full text-sm font-medium text-foreground">
                       {ingredient}
                     </span>
                   ))}
                 </div>
+
                 <div className="bg-card rounded-xl p-6 border border-border mt-6">
                   <div className="flex items-start gap-3">
                     <Leaf className="w-6 h-6 text-primary flex-shrink-0" />
                     <div>
                       <h4 className="font-bold text-foreground">No Artificial Additives</h4>
                       <p className="text-sm text-muted-foreground mt-1">
-                        NOURISH Complete contains no artificial colors, flavors, or preservatives. We use only natural preservation methods including mixed tocopherols (Vitamin E).
+                        NOURISH Complete contains no artificial preservatives.
                       </p>
                     </div>
                   </div>
@@ -650,46 +622,42 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             )}
 
             {activeTab === 'nutrition' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
                 <h3 className="text-2xl font-bold text-foreground">Guaranteed Analysis</h3>
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="bg-card border border-border rounded-xl overflow-hidden">
                     {nutritionFacts.map((fact, idx) => (
-                      <div 
-                        key={idx}
-                        className={`p-4 ${idx !== nutritionFacts.length - 1 ? 'border-b border-border' : ''}`}
-                      >
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-medium text-foreground">{fact.name}</span>
+                      <div key={idx} className={`p-4 ${idx !== nutritionFacts.length - 1 ? "border-b border-border" : ""}`}>
+                        <div className="flex justify-between mb-2">
+                          <span className="font-medium">{fact.name}</span>
                           <span className="text-primary font-semibold">{fact.value}</span>
                         </div>
+
                         <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all duration-500"
+                          <div
+                            className="bg-primary h-2 rounded-full"
                             style={{ width: `${fact.bar}%` }}
                           ></div>
                         </div>
                       </div>
                     ))}
                   </div>
-                  <div className="space-y-4">
+
+                  <div className="space-y-3">
                     <div className="bg-card border border-border rounded-xl p-6">
-                      <h4 className="font-bold text-foreground mb-3 flex items-center gap-2">
+                      <h4 className="font-bold flex items-center gap-2">
                         <Award className="w-5 h-5 text-primary" />
                         AAFCO Statement
                       </h4>
-                      <p className="text-sm text-muted-foreground">
-                        NOURISH Complete is formulated to meet the nutritional levels established by the AAFCO Dog Food Nutrient Profiles for all life stages including growth of large size dogs (70 lbs or more as an adult).
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Meets all AAFCO nutrient standards for all life stages.
                       </p>
                     </div>
+
                     <div className="bg-card border border-border rounded-xl p-6">
-                      <h4 className="font-bold text-foreground mb-3">Calorie Content</h4>
-                      <p className="text-2xl font-bold text-primary">3,650 kcal/kg</p>
-                      <p className="text-sm text-muted-foreground mt-1">385 kcal/cup (calculated)</p>
+                      <h4 className="font-bold">Calorie Content</h4>
+                      <p className="text-2xl font-bold text-primary mt-1">3,650 kcal/kg</p>
                     </div>
                   </div>
                 </div>
@@ -697,33 +665,28 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             )}
 
             {activeTab === 'feeding' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <h3 className="text-2xl font-bold text-foreground">Daily Feeding Guidelines</h3>
-                <p className="text-muted-foreground">These are general guidelines. Adjust as needed based on your dog's age, activity level, and body condition.</p>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                <h3 className="text-2xl font-bold">Daily Feeding Guidelines</h3>
+
                 <div className="bg-card border border-border rounded-xl overflow-hidden">
                   <table className="w-full">
                     <thead className="bg-primary/10">
                       <tr>
-                        <th className="text-left p-4 font-semibold text-foreground">Dog Weight</th>
-                        <th className="text-left p-4 font-semibold text-foreground">Daily Amount</th>
-                        <th className="text-left p-4 font-semibold text-foreground hidden sm:table-cell">Cups/Day</th>
+                        <th className="p-4 font-semibold text-left">Dog Weight</th>
+                        <th className="p-4 font-semibold text-left">Daily Amount</th>
+                        <th className="p-4 font-semibold text-left hidden sm:table-cell">Cups/Day</th>
                       </tr>
                     </thead>
                     <tbody>
                       {[
-                        { weight: '5-10 lbs', amount: '½ - 1 cup', cups: '0.5 - 1' },
-                        { weight: '11-25 lbs', amount: '1 - 1¾ cups', cups: '1 - 1.75' },
-                        { weight: '26-50 lbs', amount: '1¾ - 2¾ cups', cups: '1.75 - 2.75' },
-                        { weight: '51-75 lbs', amount: '2¾ - 3½ cups', cups: '2.75 - 3.5' },
-                        { weight: '76-100 lbs', amount: '3½ - 4¼ cups', cups: '3.5 - 4.25' },
-                        { weight: '100+ lbs', amount: '4¼+ cups', cups: '4.25+' },
-                      ].map((row, idx) => (
-                        <tr key={idx} className={idx % 2 === 0 ? 'bg-muted/30' : ''}>
-                          <td className="p-4 text-foreground font-medium">{row.weight}</td>
+                        { weight: "5-10 lbs", amount: "½ - 1 cup", cups: "0.5 - 1" },
+                        { weight: "11-25 lbs", amount: "1 - 1¾ cups", cups: "1 - 1.75" },
+                        { weight: "26-50 lbs", amount: "1¾ - 2¾ cups", cups: "1.75 - 2.75" },
+                        { weight: "51-75 lbs", amount: "2¾ - 3½ cups", cups: "2.75 - 3.5" },
+                        { weight: "76-100 lbs", amount: "3½ - 4¼ cups", cups: "3.5 - 4.25" },
+                      ].map((row, i) => (
+                        <tr key={i} className={i % 2 === 0 ? "bg-muted/30" : ""}>
+                          <td className="p-4 font-medium text-foreground">{row.weight}</td>
                           <td className="p-4 text-muted-foreground">{row.amount}</td>
                           <td className="p-4 text-muted-foreground hidden sm:table-cell">{row.cups}</td>
                         </tr>
@@ -731,9 +694,10 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                     </tbody>
                   </table>
                 </div>
-                <div className="bg-accent/10 rounded-xl p-4 border border-accent/20">
-                  <p className="text-sm text-foreground font-medium">
-                    💡 <strong>Pro Tip:</strong> For puppies under 1 year, feed 2x the adult amount divided into 3-4 meals daily. Reduce to adult portions gradually after 12 months.
+
+                <div className="bg-accent/10 border border-accent/20 rounded-xl p-4">
+                  <p className="text-sm text-foreground">
+                    💡 Puppies under 1 year require 2× the adult amount split into 3 meals.
                   </p>
                 </div>
               </motion.div>
@@ -742,197 +706,171 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
         </div>
       </section>
 
-      {/* Customer Reviews Section */}
+      {/* Reviews Section */}
       <section id="reviews" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-12">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="grid lg:grid-cols-12 gap-8">
-            {/* Rating Summary */}
-            <div className="lg:col-span-4">
-              <div className="bg-card border border-border rounded-2xl p-6 sticky top-24">
-                <h2 className="text-2xl font-bold text-foreground mb-4">Customer Reviews</h2>
-                
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-5xl font-bold text-foreground">{product.rating}</span>
-                  <div>
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 text-accent fill-accent" />
-                      ))}
-                    </div>
-                    <p className="text-sm text-muted-foreground">{product.reviews.toLocaleString()} global ratings</p>
+        <div className="max-w-[1400px] mx-auto grid lg:grid-cols-12 gap-8">
+
+          {/* LEFT SUMMARY CARD */}
+          <div className="lg:col-span-4">
+            <div className="bg-card border border-border rounded-2xl p-6 sticky top-24">
+
+              <h2 className="text-2xl font-bold mb-4">Customer Reviews</h2>
+
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-5xl font-bold">{product.rating}</span>
+                <div>
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-5 h-5 text-accent fill-accent" />
+                    ))}
                   </div>
+                  <p className="text-sm text-muted-foreground">{product.reviews.toLocaleString()} ratings</p>
                 </div>
-
-                {/* Rating Breakdown */}
-                <div className="space-y-2 mb-6">
-                  {ratingBreakdown.map((item) => (
-                    <button
-                      key={item.stars}
-                      onClick={() => setReviewFilter(item.stars.toString())}
-                      className="w-full flex items-center gap-2 hover:bg-muted/50 p-1 rounded transition-colors"
-                    >
-                      <span className="text-sm text-primary hover:underline whitespace-nowrap">{item.stars} star</span>
-                      <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
-                        <div 
-                          className="bg-accent h-full rounded-full transition-all"
-                          style={{ width: `${item.percentage}%` }}
-                        ></div>
-                      </div>
-                      <span className="text-sm text-muted-foreground w-12 text-right">{item.percentage}%</span>
-                    </button>
-                  ))}
-                </div>
-
-                <button className="w-full bg-primary/10 text-primary py-3 rounded-xl font-semibold text-sm hover:bg-primary/20 transition-colors">
-                  Write a Customer Review
-                </button>
-              </div>
-            </div>
-
-            {/* Reviews List */}
-            <div className="lg:col-span-8 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <h3 className="text-xl font-bold text-foreground">Top Reviews</h3>
-                <select 
-                  value={reviewFilter}
-                  onChange={(e) => setReviewFilter(e.target.value)}
-                  className="bg-card border border-border rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  <option value="all">All Stars</option>
-                  <option value="5">5 Star Only</option>
-                  <option value="4">4 Star Only</option>
-                  <option value="3">3 Star Only</option>
-                </select>
               </div>
 
-              {customerReviews.map((review) => (
-                <motion.div
-                  key={review.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-card border border-border rounded-xl p-6"
-                >
-                  {/* Reviewer Info */}
-                  <div className="flex items-start gap-3 mb-4">
-                    <img 
-                      src={review.avatar} 
-                      alt={review.name}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-semibold text-foreground">{review.name}</span>
-                        {review.verified && (
-                          <span className="inline-flex items-center gap-1 text-xs text-primary font-medium">
-                            <BadgeCheck className="w-3 h-3" />
-                            Verified Purchase
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground">{review.dogBreed} • {review.size}</p>
+              {/* Rating bars */}
+              <div className="space-y-1 mb-6">
+                {ratingBreakdown.map((item) => (
+                  <button 
+                    key={item.stars}
+                    onClick={() => setReviewFilter(item.stars.toString())}
+                    className="flex items-center gap-2 w-full hover:bg-muted/50 p-1 rounded"
+                  >
+                    <span className="text-sm text-primary">{item.stars} star</span>
+                    <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
+                      <div className="bg-accent h-full" style={{ width: item.percentage + "%" }} />
                     </div>
-                  </div>
+                    <span className="text-sm text-muted-foreground w-10">{item.percentage}%</span>
+                  </button>
+                ))}
+              </div>
 
-                  {/* Rating & Title */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-accent fill-accent' : 'text-muted'}`} />
-                      ))}
-                    </div>
-                    <span className="font-bold text-foreground">{review.title}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mb-3">Reviewed {review.date}</p>
-
-                  {/* Review Content */}
-                  <p className="text-muted-foreground mb-4">{review.content}</p>
-
-                  {/* Review Images */}
-                  {review.images && (
-                    <div className="flex gap-2 mb-4">
-                      {review.images.map((img, idx) => (
-                        <img 
-                          key={idx}
-                          src={img} 
-                          alt="Review"
-                          className="w-20 h-20 rounded-lg object-cover border border-border"
-                        />
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Helpful */}
-                  <div className="flex items-center gap-4 pt-4 border-t border-border">
-                    <span className="text-sm text-muted-foreground">{review.helpful} people found this helpful</span>
-                    <div className="flex items-center gap-2">
-                      <button 
-                        onClick={() => handleHelpful(review.id, 'up')}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                          helpfulReviews[review.id] === 'up' 
-                            ? 'bg-primary text-primary-foreground' 
-                            : 'bg-muted hover:bg-muted/80 text-foreground'
-                        }`}
-                      >
-                        <ThumbsUp className="w-4 h-4" />
-                        Helpful
-                      </button>
-                      <button 
-                        onClick={() => handleHelpful(review.id, 'down')}
-                        className={`p-1.5 rounded-lg transition-colors ${
-                          helpfulReviews[review.id] === 'down'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted hover:bg-muted/80 text-foreground'
-                        }`}
-                      >
-                        <ThumbsDown className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-
-              <button className="w-full py-4 border border-border rounded-xl text-foreground font-semibold hover:bg-muted/50 transition-colors">
-                See All {product.reviews.toLocaleString()} Reviews
+              <button className="w-full bg-primary/10 text-primary rounded-xl py-3">
+                Write a Review
               </button>
             </div>
+          </div>
+
+          {/* RIGHT REVIEWS */}
+          <div className="lg:col-span-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold">Top Reviews</h3>
+
+              <select
+                value={reviewFilter}
+                onChange={(e) => setReviewFilter(e.target.value)}
+                className="border border-border rounded-lg px-3 py-2 text-sm"
+              >
+                <option value="all">All</option>
+                <option value="5">5 Star</option>
+                <option value="4">4 Star</option>
+                <option value="3">3 Star</option>
+              </select>
+            </div>
+
+            {customerReviews.map((review) => (
+              <motion.div
+                key={review.id}
+                className="bg-card border border-border rounded-xl p-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <img src={review.avatar} className="w-10 h-10 rounded-full" />
+
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">{review.name}</span>
+                      {review.verified && (
+                        <span className="text-xs text-primary flex items-center">
+                          <BadgeCheck className="w-3 h-3" /> Verified
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-xs text-muted-foreground">
+                      {review.dogBreed} • {review.size}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 mb-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-4 h-4 ${i < review.rating ? "text-accent fill-accent" : "text-muted"}`} />
+                  ))}
+                  <span className="font-semibold">{review.title}</span>
+                </div>
+
+                <p className="text-xs text-muted-foreground mb-3">Reviewed {review.date}</p>
+
+                <p className="text-muted-foreground mb-3">{review.content}</p>
+
+                {review.images && (
+                  <div className="flex gap-2 mb-4">
+                    {review.images.map((img, i) => (
+                      <img key={i} src={img} className="w-20 h-20 rounded-lg object-cover border" />
+                    ))}
+                  </div>
+                )}
+
+                {/* Helpful buttons */}
+                <div className="flex gap-4 border-t pt-3">
+                  <span className="text-sm text-muted-foreground">{review.helpful} people found this helpful</span>
+
+                  <button
+                    onClick={() => handleHelpful(review.id, "up")}
+                    className={`px-3 py-1.5 rounded-lg text-sm flex gap-1 items-center ${
+                      helpfulReviews[review.id] === "up" ? "bg-primary text-white" : "bg-muted"
+                    }`}
+                  >
+                    <ThumbsUp className="w-4 h-4" />
+                    Helpful
+                  </button>
+
+                  <button
+                    onClick={() => handleHelpful(review.id, "down")}
+                    className={`px-3 py-1.5 rounded-lg ${
+                      helpfulReviews[review.id] === "down" ? "bg-primary text-white" : "bg-muted"
+                    }`}
+                  >
+                    <ThumbsDown className="w-4 h-4" />
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+
+            <button className="w-full border border-border rounded-xl py-4">
+              See All {product.reviews.toLocaleString()} Reviews
+            </button>
           </div>
         </div>
       </section>
 
       {/* FAQ Section */}
       <section id="questions" className="py-12 sm:py-16 px-4 sm:px-6 lg:px-12 bg-secondary/30">
-        <div className="max-w-[1000px] mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-8">
-            Frequently Asked Questions
-          </h2>
+        <div className="max-w-[900px] mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-8">Frequently Asked Questions</h2>
 
           <div className="space-y-3">
             {faqs.map((faq, idx) => (
-              <div
-                key={idx}
-                className="bg-[#F8F2EC] border border-border rounded-xl overflow-hidden"
-              >
+              <div key={idx} className="bg-[#F8F2EC] border border-border rounded-xl overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/50 transition-colors"
+                  className="flex justify-between w-full p-5"
                 >
-                  <span className="font-semibold text-foreground pr-4">{faq.q}</span>
-                  {openFaq === idx ? (
-                    <ChevronUp className="w-5 h-5 text-primary flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="w-5 h-5 text-primary flex-shrink-0" />
-                  )}
+                  <span className="font-semibold">{faq.q}</span>
+                  {openFaq === idx ? <ChevronUp /> : <ChevronDown />}
                 </button>
+
                 <AnimatePresence>
                   {openFaq === idx && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
+                      animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden"
+                      className="px-5 pb-5 text-muted-foreground"
                     >
-                      <p className="px-5 pb-5 text-muted-foreground">{faq.a}</p>
+                      {faq.a}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -941,36 +879,162 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
           </div>
 
           <div className="text-center mt-8">
-            <button className="inline-flex items-center gap-2 text-primary font-semibold hover:underline">
-              <Users className="w-5 h-5" />
-              See all {product.answeredQuestions} answered questions
+            <button className="text-primary font-semibold flex items-center gap-2 mx-auto">
+              <Users className="w-5 h-5" /> See all {product.answeredQuestions} answered questions
             </button>
           </div>
         </div>
       </section>
 
       {/* Mobile Sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border shadow-elevated z-40 p-4">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card p-4 border-t border-border shadow-xl">
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <span className="text-2xl font-bold text-foreground">${currentPrice?.price}</span>
-            <span className="text-sm text-muted-foreground line-through ml-2">${currentPrice?.oldPrice}</span>
+            <span className="text-2xl font-bold">AED{currentPrice?.price}</span>
+            <span className="ml-2 text-muted-foreground line-through">AED{currentPrice?.oldPrice}</span>
           </div>
-          <button 
+
+          <button
             onClick={addToCart}
-            className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-bold flex items-center gap-2"
+            className="bg-primary text-primary-foreground px-5 py-3 rounded-xl font-bold flex items-center gap-2"
           >
-            <ShoppingCart className="w-5 h-5" />
-            Add to Cart
+            <ShoppingCart className="w-5 h-5" /> Add
           </button>
         </div>
       </div>
 
-      <div className="pb-24 lg:pb-0">
-        {/* <Footer /> */}
+
+
+      {/*  ------------------ CHECKOUT MODAL ------------------ */}
+    {showCheckout && (
+  <div className="fixed inset-0 bg-black/40 z-50 flex items-end lg:items-center justify-center">
+    <div className="w-full lg:max-w-lg rounded-t-2xl lg:rounded-xl p-6 animate-slideUp 
+                    bg-[#F8F2EC] border border-border shadow-xl">
+
+      <h2 className="text-2xl font-bold text-foreground mb-4">Order Summary</h2>
+
+      <div className="space-y-2 text-sm text-foreground">
+        <p><strong>Product:</strong> {product.name}</p>
+        <p><strong>Size:</strong> {selectedSize} lbs</p>
+        <p><strong>Quantity:</strong> {quantity}</p>
       </div>
+
+      <p className="mt-4 text-xl font-bold text-primary">
+        Total: AED{(currentPrice.price * quantity).toFixed(2)}
+      </p>
+
+      <div className="mt-6 flex gap-3">
+        <button 
+          onClick={() => setShowCheckout(false)}
+          className="flex-1 border border-gray-300 py-3 rounded-xl font-semibold text-foreground bg-white"
+        >
+          Cancel
+        </button>
+
+        <button 
+          onClick={() => {
+            setShowCheckout(false);
+            setShowAddress(true);
+          }}
+          className="flex-1 bg-[#C8945C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-accent transition"
+        >
+          Proceed
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+      {/*  ------------------ ADDRESS MODAL ------------------ */}
+      {showAddress && (
+  <div className="fixed inset-0 bg-black/40 z-50 flex items-end lg:items-center justify-center">
+    <div className="w-full lg:max-w-lg rounded-t-2xl lg:rounded-xl p-6 animate-slideUp 
+                    bg-[#F8F2EC] border border-border shadow-xl">
+
+      <h2 className="text-2xl font-bold text-foreground mb-4">Shipping Address</h2>
+
+      <div className="space-y-3">
+        {["name", "phone", "street", "city", "zipcode"].map((field) => (
+          <input
+            key={field}
+            className="w-full border border-border p-3 rounded-lg bg-white"
+            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+            value={address[field]}
+            onChange={(e) => setAddress({ ...address, [field]: e.target.value })}
+          />
+        ))}
+      </div>
+
+      <div className="mt-6 flex gap-3">
+        <button 
+          onClick={() => {
+            setShowAddress(false);
+            setShowCheckout(true);
+          }}
+          className="flex-1 border border-gray-300 py-3 rounded-xl font-semibold bg-white text-foreground"
+        >
+          Back
+        </button>
+
+        <button 
+          onClick={() => {
+            setShowAddress(false);
+            setShowPayment(true);
+          }}
+          className="flex-1 bg-[#C8945C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-accent transition"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+
+      {/*  ------------------ PAYMENT MODAL ------------------ */}
+      {showPayment && (
+  <div className="fixed inset-0 bg-black/40 z-50 flex items-end lg:items-center justify-center">
+    <div className="w-full lg:max-w-lg rounded-t-2xl lg:rounded-xl p-6 animate-slideUp 
+                    bg-[#F8F2EC] border border-border shadow-xl">
+
+      <h2 className="text-2xl font-bold text-foreground mb-4">Payment</h2>
+
+      <p className="text-lg font-semibold text-primary mb-6">
+        Total Payable: AED{(currentPrice.price * quantity).toFixed(2)}
+      </p>
+
+      <div className="mt-6 flex gap-3">
+        <button 
+          onClick={() => {
+            setShowPayment(false);
+            setShowAddress(true);
+          }}
+          className="flex-1 border border-gray-300 py-3 rounded-xl font-semibold bg-white text-foreground"
+        >
+          Back
+        </button>
+
+        <button 
+          onClick={initiatePayment}
+          className="flex-1 bg-[#C8945C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-accent transition"
+        >
+          Pay Now
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
+
+     
+
+      <div className="pb-24 lg:pb-0" />
     </div>
   );
 };
 
 export default Product;
+
