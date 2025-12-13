@@ -4,14 +4,17 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, ArrowRight, Check, Award, Leaf, Shield, Users, Globe, Star, Heart, Zap, Truck, Lock, Package, Gift, Minus, Plus, ChevronDown, Sparkles, Clock, ThumbsUp } from 'lucide-react';
 import CountUpStat from './CountUpStat';
 import Navbar from './Navbar'
+import { useAuth } from '../contexts/AuthContext';
+import { apiFetch } from "../utils/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000/api";
 
 const Index = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
-  const [currentIngredientImage, setCurrentIngredientImage] = useState(0);
   const [cartCount, setCartCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState('30');
   const [quantity, setQuantity] = useState(1);
+  const { showLoginModal, setShowLoginModal, login } = useAuth();
   
   const { scrollYProgress } = useScroll();
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
@@ -21,50 +24,33 @@ const Index = () => {
 
   const heroImages = [
     {
-      src: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=1200&h=1400&fit=crop",
+      src: "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534823/20251202_0058_Luxurious_Dog_Chew_Scene_remix_01kbdp3v53er4tx9gv6h3nf06c_zm6nbh.png",
       alt: "Happy Golden Retriever"
     },
     {
-      src: "./20251202_0058_Luxurious Dog Chew Scene_remix_01kbdp3v53er4tx9gv6h3nf06c.png",
+      src: "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534823/20251207_2012_Dog_Enjoying_Chew_remix_01kbwm3zz8e8980xe6t7yk53wr_jtlbkc.png",
       alt: "Healthy Labrador"
     },
     {
-      src: "./20251207_1329_Himalayan Dog Chew_remix_01kbvx2nceetg8v2qk7m1eq9vf.png",
+      src: "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534823/20251202_0045_Majestic_Golden_Retriever_simple_compose_01kbdnbbh8fmm8xrwxagafwra8_zexv3d.png",
       alt: "Energetic German Shepherd"
     },
     {
-      src: "./20251207_2012_Dog Enjoying Chew_remix_01kbwm3zz8e8980xe6t7yk53wr.png",
+      src: "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534822/20251207_1329_Himalayan_Dog_Chew_remix_01kbvx2nceetg8v2qk7m1eq9vf_cb6gqa.png",
       alt: "Active Border Collie"
     }
   ];
 
-  const ingredientImages = [
-    {
-      src: "./20251207_1329_Himalayan Dog Chew_remix_01kbvx2nceetg8v2qk7m1eq9vf.png",
-      alt: "Premium dog food ingredients"
-    },
-    {
-      src: "./20251207_2012_Dog Enjoying Chew_remix_01kbwm3zz8e8980xe6t7yk53wr.png",
-      alt: "Fresh salmon and vegetables"
-    },
-    {
-      src: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=1000&fit=crop",
-      alt: "Natural organic ingredients"
-    },
-    {
-      src: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=1000&fit=crop",
-      alt: "Healthy superfoods"
-    }
-  ];
+   const ingredientVideoUrl = "https://res.cloudinary.com/dpc7tj2ze/video/upload/v1765639780/IMG_2946_yrrhj7.mp4";
 
   const product = {
-    name: "NOURISH Complete",
+    name: "Earth & Harvest Complete",
     tagline: "The Only Dog Food Your Best Friend Needs",
     description: "Our revolutionary all-in-one formula, meticulously crafted with 47 premium ingredients. Veterinary-approved nutrition that adapts to every life stage.",
     price: 89.99,
     oldPrice: 119.99,
     rating: 4.9,
-    reviews: 12847,
+    reviews: 1000,
     sizes: [
       { weight: '15', price: 49.99, oldPrice: 64.99 },
       { weight: '30', price: 89.99, oldPrice: 119.99 },
@@ -88,48 +74,78 @@ const Index = () => {
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIngredientImage((prev) => (prev + 1) % ingredientImages.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, [ingredientImages.length]);
+  const addToCart = async () => {
+  if (!localStorage.getItem("token")) {
+    setShowLoginModal(true);
+    return;
+  }
 
-  const addToCart = () => {
+  try {
+    await apiFetch(`${API_BASE}/cart/add`, {
+      method: "POST",
+      body: JSON.stringify({
+        productId: "65f9e8c2f4c1a8b345456789",           // use real productId later
+        size: selectedSize,
+        quantity
+      })
+    });
+
     setCartCount(prev => prev + quantity);
+  } catch (err) {
+    console.error("Add to cart failed:", err);
+  }
+};
+
+
+
+useEffect(() => {
+  const fetchCart = async () => {
+    try {
+      const res = await apiFetch(`${API_BASE}/cart`);
+      const count = res.data.items.reduce((s, i) => s + i.quantity, 0);
+      setCartCount(count);
+    } catch (e) {
+      setCartCount(0);
+    }
   };
 
+  if (localStorage.getItem("token")) {
+    fetchCart();
+  }
+}, []);
+
+
   const stats = [
-    { value: 2300000, label: "Happy Dogs", icon: Heart, suffix: "+" },
-    { value: 47, label: "Countries", icon: Globe },
+    { value: 1000, label: "Happy Dogs", icon: Heart, suffix: "+" },
+    { value: 3, label: "Countries", icon: Globe },
     { value: 99, label: "Satisfaction", icon: Award, suffix: "%" },
     { value: 1, label: "Vet Recommended", icon: Shield, prefix: "#" }
   ];
 
   const testimonials = [
     {
-      text: "After 3 weeks on NOURISH Complete, Max's coat is shinier than ever. His energy levels are through the roof, and he actually gets excited for meal time now!",
+      text: "After 3 weeks on Earth & Harvest Complete, Max's coat is shinier than ever. His energy levels are through the roof, and he actually gets excited for meal time now!",
       author: "Dr. Sarah Mitchell",
       role: "Veterinarian & Golden Retriever Owner",
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
       rating: 5
     },
     {
-      text: "I've recommended NOURISH to over 500 clients this year. The results speak for themselves - healthier coats, better digestion, and more vitality.",
+      text: "I've recommended Earth & Harvest to over 500 clients this year. The results speak for themselves - healthier coats, better digestion, and more vitality.",
       author: "Marcus Chen",
       role: "Professional Dog Trainer",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
       rating: 5
     },
     {
-      text: "Switching our entire rescue facility to NOURISH reduced health issues by 40%. It's now the only food we trust for our 200+ dogs.",
+      text: "Switching our entire rescue facility to Earth & Harvest reduced health issues by 40%. It's now the only food we trust for our 200+ dogs.",
       author: "Jennifer Rodriguez",
       role: "Rescue Facility Director",
       image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop",
       rating: 5
     },
     {
-      text: "My picky eater finally loves his food! NOURISH Complete changed everything. Worth every penny for the peace of mind.",
+      text: "My picky eater finally loves his food! Earth & Harvest Complete changed everything. Worth every penny for the peace of mind.",
       author: "David Thompson",
       role: "French Bulldog Dad",
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
@@ -137,14 +153,13 @@ const Index = () => {
     }
   ];
 
-  const ingredients = [
-    { name: "Wild-Caught Salmon", benefit: "Omega-3 for coat health", icon: "🐟" },
-    { name: "Organic Chicken", benefit: "Lean protein for muscles", icon: "🍗" },
-    { name: "Sweet Potato", benefit: "Healthy carbs & fiber", icon: "🍠" },
-    { name: "Blueberries", benefit: "Antioxidant powerhouse", icon: "🫐" },
-    { name: "Spinach", benefit: "Iron & vitamins", icon: "🥬" },
-    { name: "Coconut Oil", benefit: "Skin & digestive health", icon: "🥥" },
-  ];
+ const ingredients = [
+  { name: "Yak Milk", benefit: "Rich in protein & calcium", icon: "🥛" },
+  { name: "Himalayan Pink Salt", benefit: "Natural minerals & electrolytes", icon: "🧂" },
+  { name: "Lime Juice", benefit: "Supports digestion & immunity", icon: "🍋" },
+  { name: "Free Range Cow Milk", benefit: "Calcium & essential nutrients", icon: "🐄" },
+];
+
 
   const benefits = [
     {
@@ -171,7 +186,7 @@ const Index = () => {
 
   const guarantees = [
     { icon: Truck, title: "Free Shipping", desc: "On all orders" },
-    { icon: Lock, title: "90-Day Guarantee", desc: "Full refund, no questions" },
+    { icon: Lock, title: "10-Day Guarantee", desc: "Full refund, no questions" },
     { icon: Package, title: "Subscribe & Save", desc: "20% off recurring" },
     { icon: Gift, title: "Free Sample", desc: "With every order" }
   ];
@@ -181,7 +196,7 @@ const Index = () => {
       icon: Clock,
       day: "Day 1-7",
       title: "Transition Period",
-      description: "Gradual introduction to NOURISH. Your dog starts accepting the new taste profile."
+      description: "Gradual introduction to Earth & Harvest. Your dog starts accepting the new taste profile."
     },
     {
       icon: Sparkles,
@@ -205,7 +220,7 @@ const Index = () => {
 
   const faqs = [
     {
-      q: "Is NOURISH Complete suitable for all dog breeds and ages?",
+      q: "Is Earth & Harvest Complete suitable for all dog breeds and ages?",
       a: "Yes! Our formula is designed to provide complete nutrition for all breeds, from puppies (8 weeks+) to senior dogs. The balanced nutrient profile adapts to your dog's needs."
     },
     {
@@ -213,12 +228,12 @@ const Index = () => {
       a: "Most pet parents notice improved energy within 7 days, and visible coat improvements within 14-21 days. We're so confident, we offer a 90-day money-back guarantee."
     },
     {
-      q: "What makes NOURISH different from other premium brands?",
+      q: "What makes Earth & Harvest different from other premium brands?",
       a: "We use only human-grade ingredients, no fillers or by-products. Every batch is third-party tested, and we're the only brand with our proprietary Vitality Blend of 47 essential nutrients."
     },
     {
-      q: "How do I transition my dog to NOURISH Complete?",
-      a: "We recommend a gradual 7-day transition: Start with 25% NOURISH mixed with current food, increasing by 25% every 2 days. Full instructions included with your order."
+      q: "How do I transition my dog to Earth & Harvest Complete?",
+      a: "We recommend a gradual 7-day transition: Start with 25% Earth & Harvest mixed with current food, increasing by 25% every 2 days. Full instructions included with your order."
     }
   ];
 
@@ -229,8 +244,7 @@ const Index = () => {
       {/* Promo Banner */}
       <div className="bg-[#C8945C] text-white py-2 px-4 text-center text-xs sm:text-sm font-semibold">
         <span className="hidden sm:inline">🎁 LAUNCH SPECIAL: </span>
-        25% OFF + FREE SHIPPING • Code: <span className="font-bold">HEALTHYDOG</span>
-        <span className="hidden md:inline"> • Ends Sunday</span>
+        FREE SHIPPING ON EVERY ORDER ! •
       </div>
 
       <Navbar cartCount={cartCount} />
@@ -240,7 +254,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/50 via-background to-background" />
         
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-12 lg:py-20 relative z-10 w-full">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Left Content */}
             <motion.div 
               initial={{ opacity: 0, x: -50 }}
@@ -354,7 +368,7 @@ const Index = () => {
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative order-1 lg:order-2"
+              className="relative order-2 lg:order-2"
             >
               <motion.div 
                 style={{ y: heroY }}
@@ -415,14 +429,14 @@ const Index = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
-                className="absolute bg-[#F8F2EC] -bottom-4 -left-4 sm:bottom-8 sm:-left-8 bg-card border border-border rounded-2xl p-4 shadow-elevated"
+                className="absolute bg-[#F8F2EC] -bottom-4 -left-3 lg:-left-4 sm:bottom-8 sm:-left-8 bg-card border border-border rounded-2xl p-4 shadow-elevated"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <div className="w-4 h-4 lg:w-12 lg:h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                     <Users className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <p className="font-bold text-foreground">2.3M+ Dogs</p>
+                    <p className="font-bold text-foreground">1000+ Dogs</p>
                     <p className="text-sm text-muted-foreground">Fed & Thriving</p>
                   </div>
                 </div>
@@ -511,8 +525,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Ingredients with Slideshow */}
-      <section id="ingredients" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-secondary/30">
+           <section id="ingredients" className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-secondary/30">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div 
@@ -546,7 +559,7 @@ const Index = () => {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 {['AAFCO Certified', 'Non-GMO', 'Human Grade', 'No Fillers'].map((badge) => (
-                  <span key={badge} className="inline-flex items-center space-x-1 bg-[#C8945C] text-black px-3 py-1.5 rounded-full text-xs font-semibold">
+                  <span key={badge} className="inline-flex items-center space-x-1 bg-[#C8945C] text-primary px-3 py-1.5 rounded-full text-xs font-semibold">
                     <Check className="w-3 h-3" />
                     <span>{badge}</span>
                   </span>
@@ -554,50 +567,34 @@ const Index = () => {
               </div>
             </motion.div>
 
-            {/* Ingredient Image Slideshow */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              style={{ y: parallaxY }}
-              className="relative"
-            >
-              <div className="relative rounded-2xl shadow-elevated overflow-hidden aspect-square h-3/4">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentIngredientImage}
-                    src={ingredientImages[currentIngredientImage].src}
-                    alt={ingredientImages[currentIngredientImage].alt}
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                </AnimatePresence>
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6 text-background">
-                  <p className="font-bold text-white text-xl">47 Essential Nutrients</p>
-                  <p className="text-sm text-white">In every bowl</p>
-                </div>
-                
-                {/* Slideshow Indicators */}
-                <div className="absolute top-6 right-6 flex gap-1.5">
-                  {ingredientImages.map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentIngredientImage(idx)}
-                      className={`h-1.5 rounded-full transition-all ${
-                        idx === currentIngredientImage ? 'bg-primary w-6' : 'bg-background/50 w-1.5'
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+            {/* Ingredient Video */}
+<motion.div
+  initial={{ opacity: 0, x: 50 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true }}
+  className="relative flex justify-center"
+>
+  <div className="relative rounded-2xl shadow-elevated overflow-hidden aspect-[9/16] w-[280px] sm:w-[320px] md:w-[360px]">
+    <video
+      src={ingredientVideoUrl}
+      autoPlay
+      muted
+      loop
+      playsInline
+      className="absolute inset-0 w-full h-full object-cover"
+    />
+  </div>
+
+  {/* <div className="mt-4 text-center">
+    <p className="font-bold text-foreground text-lg">47 Essential Nutrients</p>
+    <p className="text-sm text-muted-foreground">In every bowl</p>
+  </div> */}
+</motion.div>
+
           </div>
         </div>
       </section>
+
 
       {/* Transformation Journey Section (Replaces Video) */}
       <section className="py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-12 bg-foreground">
@@ -677,7 +674,7 @@ const Index = () => {
             className="text-center mb-12"
           >
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-              12,847+ Happy Pet Parents
+              1000+ Happy Pet Parents
             </h2>
             <div className="flex items-center justify-center gap-2">
               <div className="flex">
@@ -782,7 +779,7 @@ const Index = () => {
               Give Your Dog The Best
             </h2>
             <p className="text-lg text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-              Join 2.3 million pet parents who made the switch. 90-day money-back guarantee.
+              Join 1000 + dog parents who made the switch. 90-day money-back guarantee.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -796,7 +793,7 @@ const Index = () => {
             </div>
             
             <p className="text-primary-foreground/70 mt-6 text-sm">
-              Free shipping • 90-day guarantee • Cancel anytime
+              Free shipping • 10-day guarantee • Cancel anytime
             </p>
           </motion.div>
         </div>
@@ -805,7 +802,7 @@ const Index = () => {
       {/* <Footer /> */}
 
       {/* Mobile Bottom CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border shadow-elevated z-50 p-3">
+      {/* <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#C8945C] border-t border-border shadow-elevated z-50 p-3">
         <div className="flex items-center gap-3">
           <div className="flex-1">
             <p className="font-bold text-foreground text-sm">${currentPrice?.price}</p>
@@ -819,7 +816,7 @@ const Index = () => {
             <span>Add to Cart</span>
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

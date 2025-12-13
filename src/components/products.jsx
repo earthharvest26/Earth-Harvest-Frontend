@@ -8,6 +8,11 @@ import {
   ChevronLeft, ChevronRight
 } from 'lucide-react';
 import Navbar from './Navbar'
+import PremiumCheckout from "./CheckoutModals";;
+import { apiFetch } from "../utils/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000/api"
+const DEMO_PRODUCT_ID = "65f9e8c2f4c1a8b345456789"
+
 
 const Product = () => {
   const [selectedSize, setSelectedSize] = useState('30');
@@ -73,11 +78,11 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       { weight: '45', price: 124.99, oldPrice: 169.99, servings: '~30 days (large dog)', pricePerLb: 2.78 },
     ],
     images: [
-      "./IMG_9607.jpg",
-      "./IMG_9615(1).jpg",
-      "./IMG_9619.jpg",
-      "./IMG_7346.jpeg",
-      "./IMG_7345(1).jpeg",
+      "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534825/IMG_9619_pisz2b.jpg",
+      "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534824/IMG_9615_1_psnlbo.jpg",
+      "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534824/IMG_7343_bq9lau.jpg",
+      "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534824/IMG_7345_1_xkaprk.jpg",
+      "https://res.cloudinary.com/dpc7tj2ze/image/upload/v1765534824/IMG_9607_muo1yh.jpg",
     ],
     stock: 847,
     soldThisMonth: 5420,
@@ -85,9 +90,23 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
 
   const currentPrice = product.sizes.find(s => s.weight === selectedSize);
 
-  const addToCart = () => {
+  const addToCart = async () => {
+  try {
+    await apiFetch(`${API_BASE}/cart/add`, {
+      method: "POST",
+      body: JSON.stringify({
+        productId: "65f9e8c2f4c1a8b345456789",
+        size: selectedSize,
+        quantity
+      })
+    });
+
     setCartCount(prev => prev + quantity);
-  };
+  } catch (err) {
+    console.error("Add to cart failed:", err);
+  }
+};
+
 
   const features = [
     { icon: Shield, title: "Vet Formulated", desc: "Developed with leading veterinary nutritionists" },
@@ -126,11 +145,11 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
 
   const faqs = [
     { q: "What size should I choose?", a: "15 lbs is perfect for small dogs (under 20 lbs), 30 lbs for medium dogs (20-50 lbs), and 45 lbs for large dogs (50+ lbs). Each bag lasts approximately 30 days based on recommended feeding guidelines." },
-    { q: "Is this suitable for puppies?", a: "Yes! NOURISH Complete is formulated for all life stages, from puppies (8 weeks+) to senior dogs. The balanced nutrient profile supports healthy growth and development at every age." },
-    { q: "How do I transition my dog to this food?", a: "We recommend a 7-day transition: Start with 25% NOURISH mixed with current food, increasing by 25% every 2 days until fully transitioned. Full instructions and a transition guide are included with your order." },
-    { q: "What if my dog doesn't like it?", a: "We offer a 90-day money-back guarantee. If your dog doesn't love NOURISH Complete, we'll refund your purchase in full – no questions asked. We'll even pay for return shipping." },
-    { q: "Where is this product made?", a: "NOURISH Complete is proudly made in our FDA-registered facility in Colorado, USA. All ingredients are sourced from trusted suppliers, with proteins from North America and seafood from sustainable fisheries." },
-    { q: "Is this grain-free?", a: "No, NOURISH Complete contains healthy whole grains like brown rice, oatmeal, and barley. Recent research suggests whole grains provide important nutrients and fiber. We also offer a grain-free option if needed." },
+    { q: "Is this suitable for puppies?", a: "Yes! Earth & Harvest Complete is formulated for all life stages, from puppies (8 weeks+) to senior dogs. The balanced nutrient profile supports healthy growth and development at every age." },
+    { q: "How do I transition my dog to this food?", a: "We recommend a 7-day transition: Start with 25% Earth & Harvest mixed with current food, increasing by 25% every 2 days until fully transitioned. Full instructions and a transition guide are included with your order." },
+    { q: "What if my dog doesn't like it?", a: "We offer a 90-day money-back guarantee. If your dog doesn't love Earth & Harvest Complete, we'll refund your purchase in full – no questions asked. We'll even pay for return shipping." },
+    { q: "Where is this product made?", a: "Earth & Harvest Complete is proudly made in our FDA-registered facility in Colorado, USA. All ingredients are sourced from trusted suppliers, with proteins from North America and seafood from sustainable fisheries." },
+    { q: "Is this grain-free?", a: "No, Earth & Harvest Complete contains healthy whole grains like brown rice, oatmeal, and barley. Recent research suggests whole grains provide important nutrients and fiber. We also offer a grain-free option if needed." },
   ];
 
   const customerReviews = [
@@ -141,7 +160,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       rating: 5,
       date: "2 weeks ago",
       title: "Finally, a food my picky eater loves!",
-      content: "As a veterinarian, I'm extremely selective about what I feed my own dogs. After trying countless premium brands, NOURISH Complete has become our household staple. My Golden's coat has never looked better, and his digestive issues have completely resolved. Worth every penny.",
+      content: "As a veterinarian, I'm extremely selective about what I feed my own dogs. After trying countless premium brands, Earth & Harvest Complete has become our household staple. My Golden's coat has never looked better, and his digestive issues have completely resolved. Worth every penny.",
       images: ["https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=200&h=200&fit=crop"],
       helpful: 847,
       size: "30 lbs",
@@ -155,7 +174,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       rating: 5,
       date: "1 month ago",
       title: "Best investment for my working dog",
-      content: "I train police K-9s professionally and have switched all 12 dogs in our program to NOURISH. The difference in energy, focus, and coat quality is remarkable. The subscription saves us 20% and auto-delivery means we never run out.",
+      content: "I train police K-9s professionally and have switched all 12 dogs in our program to Earth & Harvest. The difference in energy, focus, and coat quality is remarkable. The subscription saves us 20% and auto-delivery means we never run out.",
       helpful: 623,
       size: "45 lbs",
       dogBreed: "German Shepherd",
@@ -168,7 +187,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       rating: 5,
       date: "3 weeks ago",
       title: "Transformed our rescue facility",
-      content: "We run a rescue with 40+ dogs. Since switching to NOURISH, vet bills dropped 40% and adoption rates increased because dogs look healthier. The company even donates to our organization. True partners in pet welfare!",
+      content: "We run a rescue with 40+ dogs. Since switching to Earth & Harvest, vet bills dropped 40% and adoption rates increased because dogs look healthier. The company even donates to our organization. True partners in pet welfare!",
       helpful: 512,
       size: "45 lbs",
       dogBreed: "Various breeds",
@@ -204,10 +223,11 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
     }));
   };
 
-  // Checkout State
+  // const [showAddress, setShowAddress] = useState(false);
+  // const [showPayment, setShowPayment] = useState(false);
+
   const [showCheckout, setShowCheckout] = useState(false);
-  const [showAddress, setShowAddress] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
+
 
   const [address, setAddress] = useState({
     name: "",
@@ -222,28 +242,38 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
   };
 
   const initiatePayment = async () => {
-    try {
-      const orderPayload = {
-        productId: "123",
-        size: selectedSize,
+  try {
+    const amount = currentPrice.price * quantity;
+
+    const orderRes = await apiFetch(`${API_BASE}/order/create`, {
+      method: "POST",
+      body: JSON.stringify({
+        productId: DEMO_PRODUCT_ID,
+        sizeSelected: selectedSize,
         quantity,
-        totalAmount: (currentPrice.price * quantity),
-        address
-      };
+        address,
+        amount
+      })
+    });
 
-      const res = await fetch("/api/orders/create", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload)
-      });
+    const { orderId } = orderRes.data;
 
-      const data = await res.json();
+    const paymentRes = await apiFetch(`${API_BASE}/payment/create`, {
+      method: "POST",
+      body: JSON.stringify({
+        orderId,
+        amount
+      })
+    });
 
-      window.location.href = data.paymentUrl;
-    } catch (err) {
-      console.error("Payment Error:", err);
-    }
-  };
+    window.location.href = paymentRes.paymentUrl; // 🔥 redirect to NomoD
+
+  } catch (err) {
+    console.error("Checkout failed:", err);
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -490,19 +520,15 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                 {/* Add to Cart */}
                 <button 
                   onClick={addToCart}
-                  className="w-full bg-[#C8945C] hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium flex items-center justify-center gap-2"
+                  className="w-full bg-[#C8945C] hover:cursor-pointer hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </button>
 
                 {/* Buy Now */}
-                <button 
-                  onClick={handleBuyNow}
-                  className="w-full bg-[#C8945C] hover:bg-accent/90 text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all"
-                >
-                  Buy Now
-                </button>
+               <button className='w-full bg-[#C8945C] hover:cursor-pointer hover:bg-accent text-primary-foreground py-4 rounded-xl font-bold text-lg transition-all shadow-premium flex items-center justify-center gap-2' onClick={() => setShowCheckout(true)}> Buy Now </button>
+
 
                 {/* Subscribe Option */}
                 <div className="border border-primary/30 bg-primary/5 rounded-xl p-4">
@@ -613,7 +639,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
                     <div>
                       <h4 className="font-bold text-foreground">No Artificial Additives</h4>
                       <p className="text-sm text-muted-foreground mt-1">
-                        NOURISH Complete contains no artificial preservatives.
+                        Earth & Harvest Complete contains no artificial preservatives.
                       </p>
                     </div>
                   </div>
@@ -887,7 +913,7 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
       </section>
 
       {/* Mobile Sticky CTA */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card p-4 border-t border-border shadow-xl">
+      {/* <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-card p-4 border-t border-border shadow-xl">
         <div className="flex items-center gap-4">
           <div className="flex-1">
             <span className="text-2xl font-bold">AED{currentPrice?.price}</span>
@@ -901,135 +927,21 @@ Made in our FDA-registered facility in Colorado, each batch is tested for qualit
             <ShoppingCart className="w-5 h-5" /> Add
           </button>
         </div>
-      </div>
+      </div> */}
 
-
-
-      {/*  ------------------ CHECKOUT MODAL ------------------ */}
-    {showCheckout && (
-  <div className="fixed inset-0 bg-black/40 z-50 flex items-end lg:items-center justify-center">
-    <div className="w-full lg:max-w-lg rounded-t-2xl lg:rounded-xl p-6 animate-slideUp 
-                    bg-[#F8F2EC] border border-border shadow-xl">
-
-      <h2 className="text-2xl font-bold text-foreground mb-4">Order Summary</h2>
-
-      <div className="space-y-2 text-sm text-foreground">
-        <p><strong>Product:</strong> {product.name}</p>
-        <p><strong>Size:</strong> {selectedSize} lbs</p>
-        <p><strong>Quantity:</strong> {quantity}</p>
-      </div>
-
-      <p className="mt-4 text-xl font-bold text-primary">
-        Total: AED{(currentPrice.price * quantity).toFixed(2)}
-      </p>
-
-      <div className="mt-6 flex gap-3">
-        <button 
-          onClick={() => setShowCheckout(false)}
-          className="flex-1 border border-gray-300 py-3 rounded-xl font-semibold text-foreground bg-white"
-        >
-          Cancel
-        </button>
-
-        <button 
-          onClick={() => {
-            setShowCheckout(false);
-            setShowAddress(true);
-          }}
-          className="flex-1 bg-[#C8945C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-accent transition"
-        >
-          Proceed
-        </button>
-      </div>
-    </div>
-  </div>
+      {showCheckout && (
+  <PremiumCheckout
+    product={product}
+    selectedSize={selectedSize}
+    quantity={quantity}
+    currentPrice={currentPrice}
+    address={address}
+    setAddress={setAddress}
+    onClose={() => setShowCheckout(false)}
+    onPayNow={initiatePayment}   // ← Nomod call from your Product.jsx
+  />
 )}
 
-
-      {/*  ------------------ ADDRESS MODAL ------------------ */}
-      {showAddress && (
-  <div className="fixed inset-0 bg-black/40 z-50 flex items-end lg:items-center justify-center">
-    <div className="w-full lg:max-w-lg rounded-t-2xl lg:rounded-xl p-6 animate-slideUp 
-                    bg-[#F8F2EC] border border-border shadow-xl">
-
-      <h2 className="text-2xl font-bold text-foreground mb-4">Shipping Address</h2>
-
-      <div className="space-y-3">
-        {["name", "phone", "street", "city", "zipcode"].map((field) => (
-          <input
-            key={field}
-            className="w-full border border-border p-3 rounded-lg bg-white"
-            placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-            value={address[field]}
-            onChange={(e) => setAddress({ ...address, [field]: e.target.value })}
-          />
-        ))}
-      </div>
-
-      <div className="mt-6 flex gap-3">
-        <button 
-          onClick={() => {
-            setShowAddress(false);
-            setShowCheckout(true);
-          }}
-          className="flex-1 border border-gray-300 py-3 rounded-xl font-semibold bg-white text-foreground"
-        >
-          Back
-        </button>
-
-        <button 
-          onClick={() => {
-            setShowAddress(false);
-            setShowPayment(true);
-          }}
-          className="flex-1 bg-[#C8945C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-accent transition"
-        >
-          Continue
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
-
-
-      {/*  ------------------ PAYMENT MODAL ------------------ */}
-      {showPayment && (
-  <div className="fixed inset-0 bg-black/40 z-50 flex items-end lg:items-center justify-center">
-    <div className="w-full lg:max-w-lg rounded-t-2xl lg:rounded-xl p-6 animate-slideUp 
-                    bg-[#F8F2EC] border border-border shadow-xl">
-
-      <h2 className="text-2xl font-bold text-foreground mb-4">Payment</h2>
-
-      <p className="text-lg font-semibold text-primary mb-6">
-        Total Payable: AED{(currentPrice.price * quantity).toFixed(2)}
-      </p>
-
-      <div className="mt-6 flex gap-3">
-        <button 
-          onClick={() => {
-            setShowPayment(false);
-            setShowAddress(true);
-          }}
-          className="flex-1 border border-gray-300 py-3 rounded-xl font-semibold bg-white text-foreground"
-        >
-          Back
-        </button>
-
-        <button 
-          onClick={initiatePayment}
-          className="flex-1 bg-[#C8945C] text-white py-3 rounded-xl font-bold shadow-md hover:bg-accent transition"
-        >
-          Pay Now
-        </button>
-      </div>
-
-    </div>
-  </div>
-)}
-
-     
 
       <div className="pb-24 lg:pb-0" />
     </div>

@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <img 
               src="https://i.ibb.co/99XT05ZF/New-Logo-Tinny-transparent.png" 
-              alt="Nourish Logo"
+              alt="Earth & Harvest Logo"
               className="w-32 h-12 object-contain mb-4"
             />
             <p className="text-sm max-w-md mb-6">
@@ -55,7 +55,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 text-sm">
-          <p>© 2024 NOURISH. All rights reserved.</p>
+          <p>© 2024 Earth & Harvest. All rights reserved.</p>
 
           <div className="flex gap-6">
             <a href="#" className="hover:text-primary transition-colors">Privacy</a>
