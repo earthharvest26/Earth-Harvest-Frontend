@@ -325,7 +325,7 @@ useEffect(() => {
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   {/* Quantity */}
-                  <div className="flex items-center border border-border rounded-xl overflow-hidden">
+                  <div className="flex items-center border border-border rounded-xl">
                     <button 
                       onClick={() => setQuantity(q => Math.max(1, q - 1))}
                       className="p-3 hover:bg-muted transition-colors"
@@ -739,7 +739,7 @@ useEffect(() => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="bg-[#F8F2EC] border border-border rounded-xl overflow-hidden"
+                className="bg-[#F8F2EC] border border-border rounded-xl"
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
