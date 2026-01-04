@@ -45,7 +45,7 @@ const Index = () => {
   const product = {
     name: "Earth & Harvest Complete",
     tagline: "The Only Dog Food Your Best Friend Needs",
-    description: "Our revolutionary all-in-one formula, meticulously crafted with 47 premium ingredients. Veterinary-approved nutrition that adapts to every life stage.",
+    description: "Natural, healthy, and delicious chews that dogs love. Handcrafted with care with only 3 simple ingredients – yak/cow milk, salt and lime, for your furry friend's happiness and dental health.",
     price: 89.99,
     oldPrice: 119.99,
     rating: 4.9,
@@ -145,31 +145,32 @@ const Index = () => {
 
   const benefits = [
     {
-      icon: Heart,
-      title: "Complete Nutrition",
-      description: "47 essential nutrients for whole-body health at every life stage"
+      icon: Clock, // Represents long-lasting chew time
+      title: "Long lasting",
+      description: "Hard, slow-dried chews that keep dogs engaged longer and satisfy natural chewing instincts."
     },
     {
-      icon: Zap,
-      title: "Visible Energy",
-      description: "See the difference in 14 days or your money back"
+      icon: Zap, // Energy / protein
+      title: "High Protein",
+      description: "Naturally rich in protein from yak and cow milk to support muscle strength and vitality."
     },
     {
-      icon: Shield,
-      title: "Vet Approved",
-      description: "Developed with leading veterinary nutritionists"
+      icon: Shield, // Health / controlled nutrition
+      title: "Low fat",
+      description: "A wholesome, low-fat chew option ideal for regular chewing without excess calories."
     },
     {
-      icon: Leaf,
-      title: "Clean Ingredients",
-      description: "No fillers, no artificial anything. Just real food."
+      icon: Leaf, // Natural ingredients
+      title: "Only 3 natural ingredients",
+      description: "Made using just yak & cow milk, salt, and lime juice — no hormones, antibiotics, artificial colours, flavours, or preservatives."
     }
   ];
+  
 
   const guarantees = [
     { icon: Truck, title: "Free Shipping", desc: "On all orders" },
-    { icon: Lock, title: "10-Day Guarantee", desc: "Full refund, no questions" },
-    { icon: Package, title: "Subscribe & Save", desc: "20% off recurring" },
+    { icon: Lock, title: "30-days guarantee", desc: "Full refund, no questions on unopened packets" },
+    { icon: Package, title: "Buy in bulk & Save", desc: "28.5% off when ordering 5 packets or more" },
     { icon: Gift, title: "Free Sample", desc: "With every order" }
   ];
 
@@ -224,7 +225,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Top Announcement Bar */}
-      <div className="bg-gradient-to-r from-[#C8945C] via-[#B8844C] to-[#C8945C] text-white py-3 px-4 text-center text-xs sm:text-sm font-medium relative overflow-hidden">
+      {/* <div className="bg-gradient-to-r from-[#C8945C] via-[#B8844C] to-[#C8945C] text-white py-3 px-4 text-center text-xs sm:text-sm font-medium relative overflow-hidden">
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
           animate={{ x: ['-100%', '200%'] }}
@@ -234,12 +235,12 @@ const Index = () => {
           <span className="hidden sm:inline">🎁 LAUNCH SPECIAL: </span>
           FREE SHIPPING ON EVERY ORDER • NO MINIMUM PURCHASE REQUIRED
         </span>
-      </div>
+      </div> */}
 
       <Navbar cartCount={cartCount} />
 
       {/* Modern Hero Section with Advanced Animations */}
-      <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-[#FAF7F2] via-white to-[#F8F2EC]">
+      <section className="relative mt-12 min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-[#FAF7F2] via-white to-[#F8F2EC]">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
@@ -280,17 +281,17 @@ const Index = () => {
               >
                 <span className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-[#C8945C]/20 text-[#C8945C] px-4 py-2 rounded-full text-xs font-bold shadow-sm">
                   <Star className="w-3.5 h-3.5 fill-[#C8945C]" />
-                  <span>BESTSELLER</span>
+                  <span>100% NATURAL</span>
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-[#C8945C]/20 text-[#C8945C] px-4 py-2 rounded-full text-xs font-bold shadow-sm">
                   <Award className="w-3.5 h-3.5" />
-                  <span>#1 VET RECOMMENDED</span>
+                  <span>REVOLUTIONARY ALL IN ONE FORMULA</span>
                 </span>
               </motion.div>
               
               <div className="space-y-4">
                 <motion.h1 
-                  className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-gray-900 leading-tight"
+                  className="text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-semibold text-gray-900 leading-tight"
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
@@ -356,11 +357,17 @@ const Index = () => {
                     transition={{ duration: 0.3 }}
                   />
                 </Link>
-                <button className="inline-flex items-center justify-center px-6 sm:px-8 py-4 bg-white border-2 border-gray-200 text-gray-700 font-semibold rounded-xl hover:border-[#C8945C] hover:text-[#C8945C] transition-all duration-300">
-                  <Play className="w-5 h-5 mr-2" />
-                  <span className="hidden sm:inline">Watch Video</span>
-                  <span className="sm:hidden">Video</span>
-                </button>
+                <Link
+  to="#video-testimonials"
+  className="inline-flex items-center justify-center px-6 sm:px-8 py-4
+             bg-white border-2 border-gray-200 text-gray-700 font-semibold
+             rounded-xl hover:border-[#C8945C] hover:text-[#C8945C]
+             transition-all duration-300"
+>
+  <Play className="w-5 h-5 mr-2" />
+  <span className="hidden sm:inline">Watch Video</span>
+  <span className="sm:hidden">Video</span>
+</Link>
               </motion.div>
 
               {/* Trust Indicators */}
@@ -376,7 +383,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
-                  <span>90-Day Guarantee</span>
+                  <span>30-days money back guarantee</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
@@ -603,7 +610,7 @@ const Index = () => {
               </div>
 
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                {['AAFCO Certified', 'Non-GMO', 'Human Grade', 'No Fillers'].map((badge) => (
+                {['No added hormones', 'No antibiotics', 'No artificial colour', 'No artificial preservatives'].map((badge) => (
                   <span key={badge} className="inline-flex items-center gap-2 bg-[#C8945C] text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-semibold">
                     <Check className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span>{badge}</span>
@@ -635,7 +642,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Transformation Journey */}
+      {/* Transformation Journey
       <section className="py-16 sm:py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -680,7 +687,7 @@ const Index = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Video Testimonials */}
       <section id="video-testimonials" className="py-16 sm:py-24 bg-white">
@@ -858,13 +865,13 @@ const Index = () => {
                 to="/product"
                 className="inline-flex items-center justify-center gap-2 bg-white text-[#C8945C] px-6 sm:px-8 py-4 rounded-xl font-semibold text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
               >
-                <span>Shop Now - 25% OFF</span>
+                <span>Shop Now - 14% OFF</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
             
             <p className="text-white/80 mt-6 sm:mt-8 text-sm sm:text-base">
-              Free shipping • 90-day guarantee • Cancel anytime
+              Free shipping • 30-day guarantee • Cancel anytime
             </p>
           </motion.div>
         </div>
