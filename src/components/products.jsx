@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useSearchParams } from 'react-router-dom';
 import { 
-  ShoppingCart, Check, Star, Heart, Truck, Lock, Package, Gift, Minus, Plus, 
+  ShoppingCart, Check, Star, Truck, Lock, Package, Gift, Minus, Plus, 
   Shield, Leaf, Award, ChevronDown, ChevronUp, Zap, Clock, Users, 
-  ThumbsUp, ThumbsDown, Camera, Share2, Bell, RotateCcw, BadgeCheck, Sparkles,
-  ChevronLeft, ChevronRight,
+  ThumbsUp, ThumbsDown, Camera, RotateCcw, BadgeCheck, Sparkles,
+  ChevronLeft, ChevronRight, ZoomIn, ZoomOut,
   Box
 } from 'lucide-react';
 import Navbar from './Navbar'
@@ -26,10 +26,8 @@ const Product = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [openFaq, setOpenFaq] = useState(null);
   const [activeTab, setActiveTab] = useState('description');
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
-  const [isZooming, setIsZooming] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const [reviewFilter, setReviewFilter] = useState('all');
   const [helpfulReviews, setHelpfulReviews] = useState({});
   const [product, setProduct] = useState(null);
@@ -137,14 +135,16 @@ const Product = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleMouseMove = (e) => {
-    if (!imageRef.current) return;
-    
-    const rect = imageRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.5, 3)); // Max zoom 3x
+  };
 
-    setZoomPosition({ x, y });
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.5, 1)); // Min zoom 1x (normal)
+  };
+
+  const handleResetZoom = () => {
+    setZoomLevel(1);
   };
 
   if (loading) {
@@ -450,23 +450,26 @@ const Product = () => {
       <Navbar cartCount={cartCount} />
       
       {/* Modern Product Section with Creative Layout */}
-      <section className="pt-32 pb-6 sm:py-12 lg:pt-32 lg:pb-6 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-white to-white">
+      <section className="pt-20 sm:pt-24 lg:pt-32 pb-6 sm:pb-8 lg:pb-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 via-white to-white">
         <div className="max-w-7xl mx-auto">
           {/* Mobile-First Layout */}
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16">
             {/* Product Images - Enhanced with Swipe */}
             <div className="space-y-4 order-1">
               {/* Main Image with Advanced Animations */}
               {productData.images.length > 0 && (
                 <div 
                   ref={imageRef}
-                  className="relative w-full aspect-square rounded-3xl overflow-hidden bg-gray-100 shadow-2xl group"
-                  onMouseMove={handleMouseMove}
-                  onMouseEnter={() => setIsZooming(true)}
-                  onMouseLeave={() => setIsZooming(false)}
+                  className={`relative w-full aspect-square rounded-2xl sm:rounded-3xl bg-gray-100 shadow-2xl group ${
+                    zoomLevel > 1 ? 'overflow-auto' : 'overflow-hidden'
+                  }`}
                   onTouchStart={onTouchStart}
                   onTouchMove={onTouchMove}
                   onTouchEnd={onTouchEnd}
+                  style={{
+                    touchAction: zoomLevel > 1 ? 'pan-x pan-y' : 'pan-x',
+                    WebkitOverflowScrolling: 'touch'
+                  }}
                 >
                   <AnimatePresence mode="wait" custom={imageDirection}>
                     <motion.div
@@ -499,12 +502,13 @@ const Product = () => {
                       <img
                         src={productData.images[selectedImage] || productData.images[0]}
                         alt={productData.name}
-                        className="w-full h-full object-cover"
-                        style={isZooming ? {
-                          transform: 'scale(2.5)',
-                          transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
-                          transition: 'transform 0.1s ease-out'
-                        } : {}}
+                        className="w-full h-full object-cover transition-transform duration-300 ease-out select-none"
+                        style={{
+                          transform: `scale(${zoomLevel})`,
+                          transformOrigin: 'center center',
+                          touchAction: 'none'
+                        }}
+                        draggable={false}
                       />
                     </motion.div>
                   </AnimatePresence>
@@ -527,24 +531,50 @@ const Product = () => {
                     </span>
                   </motion.div>
 
-                  {/* Action Buttons */}
+                  {/* Zoom Controls */}
                   <motion.div 
-                    className="absolute top-4 sm:top-6 right-4 sm:right-6 flex flex-col gap-2 z-10"
+                    className="absolute top-3 sm:top-4 right-3 sm:right-4 lg:top-6 lg:right-6 flex flex-col gap-2 z-20"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <button 
-                      onClick={() => setIsWishlisted(!isWishlisted)}
-                      className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shadow-xl transition-all backdrop-blur-md ${
-                        isWishlisted ? 'bg-red-500 text-white scale-110' : 'bg-white/90 text-gray-700 hover:bg-white hover:scale-110'
-                      }`}
+                    <motion.button
+                      onClick={handleZoomIn}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      disabled={zoomLevel >= 3}
+                      className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shadow-lg sm:shadow-xl transition-all backdrop-blur-md bg-white/95 sm:bg-white/90 text-gray-700 hover:bg-white active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+                      title="Zoom In"
+                      aria-label="Zoom In"
                     >
-                      <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${isWishlisted ? 'fill-current' : ''}`} />
-                    </button>
-                    <button className="w-11 h-11 sm:w-12 sm:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center hover:bg-white transition-all shadow-xl text-gray-700 hover:scale-110">
-                      <Share2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                    </button>
+                      <ZoomIn className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                    </motion.button>
+                    <motion.button
+                      onClick={handleZoomOut}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      disabled={zoomLevel <= 1}
+                      className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shadow-lg sm:shadow-xl transition-all backdrop-blur-md bg-white/95 sm:bg-white/90 text-gray-700 hover:bg-white active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+                      title="Zoom Out"
+                      aria-label="Zoom Out"
+                    >
+                      <ZoomOut className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                    </motion.button>
+                    {zoomLevel > 1 && (
+                      <motion.button
+                        onClick={handleResetZoom}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full flex items-center justify-center shadow-lg sm:shadow-xl transition-all backdrop-blur-md bg-[#C8945C]/95 sm:bg-[#C8945C]/90 text-white hover:bg-[#C8945C] active:scale-95 touch-manipulation"
+                        title="Reset Zoom"
+                        aria-label="Reset Zoom"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                      >
+                        <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
+                      </motion.button>
+                    )}
                   </motion.div>
 
                   {/* Navigation Arrows - Desktop */}
@@ -565,18 +595,17 @@ const Product = () => {
                     </>
                   )}
 
-                  {/* Image Counter & Zoom Hint */}
-                  <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 flex items-center justify-between z-10">
+                  {/* Image Counter */}
+                  <div className="absolute bottom-3 sm:bottom-4 lg:bottom-6 left-3 sm:left-4 lg:left-6 right-3 sm:right-4 lg:right-6 flex items-center justify-between z-10">
                     {productData.images.length > 1 && (
-                      <div className="bg-black/70 backdrop-blur-md text-white px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium">
+                      <div className="bg-black/75 backdrop-blur-md text-white px-2.5 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 rounded-full text-xs sm:text-sm font-medium">
                         {selectedImage + 1} / {productData.images.length}
                       </div>
                     )}
-                    {!isZooming && (
-                      <div className="bg-black/70 backdrop-blur-md text-white px-3 sm:px-4 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+                    {zoomLevel > 1 && (
+                      <div className="bg-black/75 backdrop-blur-md text-white px-2.5 sm:px-3 lg:px-4 py-1 sm:py-1.5 lg:py-2 rounded-full text-xs sm:text-sm font-medium flex items-center gap-1.5 ml-auto">
                         <Camera className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">Hover to zoom</span>
-                        <span className="sm:hidden">Tap & hold</span>
+                        <span>{Math.round(zoomLevel * 100)}%</span>
                       </div>
                     )}
                   </div>
