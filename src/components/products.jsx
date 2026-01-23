@@ -6,7 +6,7 @@ import {
   Shield, Leaf, Award, ChevronDown, ChevronUp, Zap, Clock, Users, 
   ThumbsUp, ThumbsDown, Camera, RotateCcw, BadgeCheck, Sparkles,
   ChevronLeft, ChevronRight, ZoomIn, ZoomOut,
-  Box
+  Box, Heart
 } from 'lucide-react';
 import Navbar from './Navbar'
 import PremiumCheckout from "./CheckoutModals";
