@@ -61,7 +61,9 @@ export default function PremiumCheckout({
       newErrors.name = "Please enter your full name";
     }
     
-    if (!address.phone || !/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/.test(address.phone)) {
+    // Normalize phone number (remove spaces) before validation
+    const normalizedPhone = address.phone ? address.phone.replace(/\s+/g, '') : '';
+    if (!normalizedPhone || !/^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/.test(normalizedPhone)) {
       newErrors.phone = "Please enter a valid phone number";
     }
     
@@ -85,9 +87,6 @@ export default function PremiumCheckout({
       newErrors.country = "Please enter your country";
     }
     
-    if (!address.zipcode || address.zipcode.trim().length < 4) {
-      newErrors.zipcode = "Please enter a valid zipcode";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -124,9 +123,12 @@ export default function PremiumCheckout({
     
     setIsSubmitting(true);
     try {
-      // Update address with email
+      // Normalize phone number (remove spaces) before storing
+      const normalizedPhone = address.phone ? address.phone.replace(/\s+/g, '') : address.phone;
+      // Update address with email and normalized phone
       const completeAddress = {
         ...address,
+        phone: normalizedPhone, // Use normalized phone (spaces removed)
         email: email,
         deliveryInstructions: deliveryInstructions
       };
@@ -161,7 +163,7 @@ export default function PremiumCheckout({
       }
 
       // Validate address fields
-      if (!address.street || !address.city || !address.zipcode) {
+      if (!address.street || !address.city) {
         throw new Error("Please fill in all required address fields");
       }
 
@@ -177,9 +179,12 @@ export default function PremiumCheckout({
 
       console.log("Using productId for order:", productIdValue);
 
-      // Update address with email
+      // Normalize phone number (remove spaces) before storing
+      const normalizedPhone = address.phone ? address.phone.replace(/\s+/g, '') : address.phone;
+      // Update address with email and normalized phone
       const completeAddress = {
         ...address,
+        phone: normalizedPhone, // Use normalized phone (spaces removed)
         email: email,
         deliveryInstructions: deliveryInstructions
       };
@@ -192,7 +197,8 @@ export default function PremiumCheckout({
         city: address.city,
         state: address.state || "",
         country: address.country || "United Arab Emirates",
-        zipCode: parseInt(address.zipcode) || 0
+        zipCode: address.zipcode ? parseInt(address.zipcode) : undefined,
+        phone: normalizedPhone
       };
 
       console.log("Creating order with:", {
@@ -214,7 +220,10 @@ export default function PremiumCheckout({
           productId: productIdValue,
           sizeSelected: selectedSize.toString(),
           quantity: parseInt(quantity),
-          address: formattedAddress,
+          address: {
+            ...formattedAddress,
+            phone: normalizedPhone
+          },
           amount: parseFloat(amount)
         })
       });
@@ -718,30 +727,6 @@ export default function PremiumCheckout({
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-sm font-semibold text-[#2D4A3E] mb-2">
-                          Zip/Postal Code <span className="text-red-500">*</span>
-                        </label>
-                        <div className="relative">
-                          <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#6B7C72]" />
-                          <input
-                            type="text"
-                            placeholder="00000"
-                            value={address.zipcode || ""}
-                            onChange={(e) => {
-                              setAddress({ ...address, zipcode: e.target.value });
-                              if (errors.zipcode) setErrors({ ...errors, zipcode: null });
-                            }}
-                            className={`w-full border-2 ${errors.zipcode ? 'border-red-400' : 'border-[#E8DFD0]'} pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 rounded-xl bg-white text-[#2D4A3E] placeholder:text-[#6B7C72] focus:border-[#C8945C] focus:outline-none transition-colors text-sm sm:text-base`}
-                          />
-                          {errors.zipcode && (
-                            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                              <AlertCircle className="w-3 h-3" />
-                              {errors.zipcode}
-                            </p>
-                          )}
-                        </div>
-                      </div>
                     </div>
 
                     <div>

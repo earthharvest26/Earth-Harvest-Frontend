@@ -350,8 +350,23 @@ const Product = () => {
     }));
   };
 
-  const handleBuyNow = () => {
-    requireAuth(() => {
+  const handleBuyNow = async () => {
+    requireAuth(async () => {
+      // Check if item is in cart and use cart quantity
+      try {
+        const cartResponse = await apiFetch('/cart');
+        if (cartResponse.success && cartResponse.data?.items) {
+          const cartItem = cartResponse.data.items.find(
+            item => item.product?._id === (product?._id || productId) && 
+            (item.size === selectedSize || item.size?.toString() === selectedSize?.toString())
+          );
+          if (cartItem) {
+            setQuantity(cartItem.quantity);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch cart:', error);
+      }
       setShowCheckout(true);
     });
   };
@@ -366,12 +381,15 @@ const Product = () => {
       const amount = currentPrice.price * quantity;
 
       // Format address for backend
+      // Normalize phone number (remove spaces) before storing
+      const normalizedPhone = address.phone ? address.phone.replace(/\s+/g, '') : address.phone;
       const formattedAddress = {
         street: address.street,
         city: address.city,
         state: address.state || "",
         country: address.country || "UAE",
-        zipCode: parseInt(address.zipcode) || 0
+        zipCode: address.zipcode ? parseInt(address.zipcode) : undefined,
+        phone: normalizedPhone
       };
 
       const orderRes = await apiFetch('/order/create', {
@@ -787,6 +805,39 @@ const Product = () => {
                     <span>Secure transaction</span>
                   </div>
                 </div> */}
+                {/* Quantity Selector */}
+                <div className="mb-4 sm:mb-6 md:mb-8 pb-4 sm:pb-6 md:pb-8 border-b border-[#E8DFD0]">
+                  <label className="block text-sm sm:text-base font-semibold text-[#2D4A3E] mb-3">Quantity</label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg border-2 border-[#E8DFD0] hover:border-[#C8945C] hover:bg-[#FAF7F2] transition-colors"
+                    >
+                      <Minus className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D4A3E]" />
+                    </button>
+                    <input
+                      type="number"
+                      min="1"
+                      max={productData.stock || 999}
+                      value={quantity}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 1;
+                        setQuantity(Math.max(1, Math.min(val, productData.stock || 999)));
+                      }}
+                      className="w-20 sm:w-24 text-center text-lg sm:text-xl font-bold text-[#2D4A3E] border-2 border-[#E8DFD0] rounded-lg py-2 focus:border-[#C8945C] focus:outline-none"
+                    />
+                    <button
+                      onClick={() => setQuantity(Math.min(productData.stock || 999, quantity + 1))}
+                      className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-lg border-2 border-[#E8DFD0] hover:border-[#C8945C] hover:bg-[#FAF7F2] transition-colors"
+                    >
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5 text-[#2D4A3E]" />
+                    </button>
+                    <span className="text-sm text-[#6B7C72] ml-auto">
+                      {productData.stock || 0} available
+                    </span>
+                  </div>
+                </div>
+
                 {/* Premium CTA Buttons */}
                 <div className="space-y-2 sm:space-y-3">
                   {/* Add to Cart */}

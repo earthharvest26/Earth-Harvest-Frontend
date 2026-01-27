@@ -74,7 +74,7 @@ const Navbar = ({ cartCount }) => {
           <div className="flex items-center space-x-3">
 
             {/* Cart */}
-            <button className="relative p-2.5 text-gray-700 hover:text-[#C8945C] transition-colors rounded-lg hover:bg-gray-50">
+            <Link to="/cart" className="relative p-2.5 text-gray-700 hover:text-[#C8945C] transition-colors rounded-lg hover:bg-gray-50">
               <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
 
               {cartCount > 0 && (
@@ -87,7 +87,7 @@ const Navbar = ({ cartCount }) => {
                   {cartCount}
                 </motion.span>
               )}
-            </button>
+            </Link>
 
             {/* User Menu */}
             {isAuthenticated && user ? (

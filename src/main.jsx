@@ -6,6 +6,7 @@ import Products from './components/products.jsx';
 import Profile from './components/Profile.jsx';
 import AdminPanel from './components/AdminPanel.jsx';
 import AdminLogin from './components/AdminLogin.jsx';
+import Cart from './components/Cart.jsx';
 import PaymentSuccess from './components/PaymentSuccess.jsx';
 import PaymentFailure from './components/PaymentFailure.jsx';
 import Layout from './layout.jsx';
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: 'profile', element: <Profile /> },
       { path: 'admin/login', element: <AdminLogin /> },
       { path: 'admin', element: <AdminPanel /> },
+      { path: 'cart', element: <Cart /> },
       { path: 'payment-success', element: <PaymentSuccess /> },
       { path: 'payment-failure', element: <PaymentFailure /> }
     ]
