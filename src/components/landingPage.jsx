@@ -43,22 +43,22 @@ const Index = () => {
   const videoTestimonials = [
     {
       id: 1,
-      name: "Mark’s Journey",
-      description: "How Earth & Harvest improved digestion and energy",
+      name: "Alby at The Greens",
+      description: "How the himalayan chews have brought happiness",
       videoUrl: "https://res.cloudinary.com/dpc7tj2ze/video/upload/v1767530853/VID-20260104-WA0002_uhnbbd.mp4",
       thumbnail: "https://res.cloudinary.com/your-cloud/image/upload/v1/max-thumb.jpg"
     },
     {
       id: 2,
-      name: "Bella’s Journey",
-      description: "From picky eater to happy chewer",
+      name: "Nilo at The Lakes",
+      description: "Another happy chewer",
       videoUrl: "https://res.cloudinary.com/dpc7tj2ze/video/upload/v1767530852/VID-20251228-WA0006_yg7xbs.mp4",
       thumbnail: "https://res.cloudinary.com/your-cloud/image/upload/v1/bella-thumb.jpg"
     },
     {
       id: 3,
-      name: "Julia’s Journey",
-      description: "From picky eater to happy chewer",
+      name: "Nilo at The Lakes",
+      description: "Happy outside the house too",
       videoUrl: "https://res.cloudinary.com/dpc7tj2ze/video/upload/v1767532309/VID-20260104-WA0008_2_imjmoo.mp4",
       thumbnail: "https://res.cloudinary.com/your-cloud/image/upload/v1/bella-thumb.jpg"
     }
@@ -161,9 +161,9 @@ const Index = () => {
   ];
 
   const ingredients = [
-    { name: "Yak Milk", benefit: "Rich in protein & calcium", icon: "🥛" },
-    { name: "Himalayan Salt", benefit: "Natural minerals & electrolytes", icon: "🧂" },
-    { name: "Lime Juice", benefit: "Supports digestion & immunity", icon: "🍋" }
+    { name: "Yak & Cow Milk", benefit: "99.9%", icon: "🥛" },
+    { name: "Traces of Salt", benefit: "less than 1%", icon: "🧂" },
+    { name: "Trace of Lime Juice", benefit: "less than 1%", icon: "🍋" }
   ];
 
   const benefits = [
@@ -192,7 +192,7 @@ const Index = () => {
 
   const guarantees = [
     { icon: Truck, title: "Free Shipping", desc: "On all orders" },
-    { icon: Lock, title: "30-days guarantee", desc: "Full refund, no questions on unopened packets" },
+    { icon: Lock, title: "10-days guarantee", desc: "Full refund, no questions on unopened packets" },
     { icon: Package, title: "Buy in bulk & Save", desc: "28.5% off when ordering 5 packets or more" },
   ];
 
@@ -226,19 +226,19 @@ const Index = () => {
   const faqs = [
     {
       q: "Is Earth & Harvest Complete suitable for all dog breeds and ages?",
-      a: "Yes! Our formula is designed to provide complete nutrition for all breeds, from puppies (8 weeks+) to senior dogs. The balanced nutrient profile adapts to your dog's needs."
+      a: "Coming soon..."
     },
     {
       q: "How long until I see results?",
-      a: "Most pet parents notice improved energy within 7 days, and visible coat improvements within 14-21 days. We're so confident, we offer a 90-day money-back guarantee."
+      a: "Coming soon..."
     },
     {
       q: "What makes Earth & Harvest different from other premium brands?",
-      a: "We use only human-grade ingredients, no fillers or by-products. Every batch is third-party tested, and we're the only brand with our proprietary Vitality Blend of 47 essential nutrients."
+      a: "Coming soon..."
     },
     {
       q: "How do I transition my dog to Earth & Harvest Complete?",
-      a: "We recommend a gradual 7-day transition: Start with 25% Earth & Harvest mixed with current food, increasing by 25% every 2 days. Full instructions included with your order."
+      a: "Coming soon..."
     }
   ];
 
@@ -307,7 +307,11 @@ const Index = () => {
                 </span>
                 <span className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-[#C8945C]/20 text-[#C8945C] px-4 py-2 rounded-full text-xs font-bold shadow-sm">
                   <Award className="w-3.5 h-3.5" />
-                  <span>REVOLUTIONARY ALL IN ONE FORMULA</span>
+                  <span>ONLY 3 SIMPLE INGREDIENTS</span>
+                </span>
+                <span className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm border border-[#C8945C]/20 text-[#C8945C] px-4 py-2 rounded-full text-xs font-bold shadow-sm">
+                  <Award className="w-3.5 h-3.5" />
+                  <span>NO ARTIFICIAL COLORS, FLAVORS, OR PRESERVATIVES</span>
                 </span>
               </motion.div>
               
